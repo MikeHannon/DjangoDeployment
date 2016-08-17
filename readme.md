@@ -50,6 +50,7 @@ When finished with your project, let's create a text file that lists our depende
 ```bash
 > pip freeze > requirements.txt
 ```
+#### edit this requirements.txt file removing pygraphviz, pydot and similar 'tricky' to install pieces. 
 
 Make sure to `add`, `commit` and `push` your final changes to GitHub. Once you login to AWS and set up a cloud server, you'll be pulling code from your GitHub (or Bitbucket) repository.
 
@@ -58,6 +59,8 @@ Make sure to `add`, `commit` and `push` your final changes to GitHub. Once you l
 > git commit -m "add python dependencies"
 > git push origin master
 ```
+
+
 
 # Step 5
 ----
@@ -253,29 +256,31 @@ One final file to edit. From your terminal:
 ubuntu14> sudo nano /etc/nginx/sites-available/myProject
 ```
 
-Add this to the following, editing what's inside curly brackets {}:
+Add this to the following, editing what's inside curly brackets {{}}:
 
 ```
 server {
     listen 80;
-    server_name {yourEC2.public.ip.here}; # This should be juts the digits from AWS public ip!
+    server_name {{yourEC2.public.ip.here}}; # This should be just the digits from AWS public ip!
     location = /favicon.ico { access_log off; log_not_found off; }
     location /static/ {
-        root /home/ubuntu/{myProject};
+        root /home/ubuntu/{{myProject}};
     }
     location / {
         include proxy_params;
-        proxy_pass http://unix:/home/ubuntu/{myProject}/{projectName}.sock;
+        proxy_pass http://unix:/home/ubuntu/{{myProject}}/{{projectName}}.sock;
     }
 }
 ```
+Remove the # This should be just the digits from AWS public ip! statement
+
 Run `ctrl-x` and save.
 
 
 Now in terminal, run the following:
 
 ```bash
-ubuntu14> sudo ln -s /etc/nginx/sites-available/{myProject} /etc/nginx/sites-enabled
+ubuntu14> sudo ln -s /etc/nginx/sites-available/{{myProject}} /etc/nginx/sites-enabled
 ubuntu14> sudo nginx -t
 ```
 
