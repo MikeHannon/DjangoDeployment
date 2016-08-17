@@ -23,6 +23,7 @@
 ## these might look like this:
 > git remote add origin https://github.com/MikeHannon/myProject.git
 > git push -u origin master
+
 # Step 4
 ----
 ### Keep working on your project and adding and committing as necessary.
