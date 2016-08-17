@@ -37,7 +37,7 @@
 ----
 ### If you go to a new directory and clone this project
 ### e.g.
-## > git clone ttps://github.com/MikeHannon/myProject.git
+## > git clone https://github.com/MikeHannon/myProject.git
 ### you will end up with an outer folder named myProject and if you cd into that project you'd see manage.py and whatever we named our project (in this example projectName)
 # Step 6
 ----
