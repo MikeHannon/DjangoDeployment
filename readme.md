@@ -259,8 +259,6 @@ ubuntu14> sudo service gunicorn stop
 ```
 ##Turn it on!
 
-*If there isn't a .sock file in your myProject folder then something went wrong with your /etc/init/gunicorn.conf, double check to make sure your file names are correct!*
-
 # Step 12
 ---
 
