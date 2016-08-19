@@ -156,8 +156,8 @@ ubunutu14 myProject> pip install psycopg2
 Navigate into your main project directory (where `settings.py` lives). We're going to use a built-in text editor in the terminal to update the code in `settings.py`. For example:
 
 ```bash
-ubunutu14 myProject> cd {{myProject}}
-ubunutu14 myProject/myProject> sudo nano settings.py
+ubunutu14 myProject> cd {{projectName}}
+ubunutu14 myProject/projectName> sudo nano settings.py
 
 ```
 
