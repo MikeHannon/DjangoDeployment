@@ -226,8 +226,8 @@ stop on runlevel [!2345]
 respawn
 setuid ubuntu
 setgid www-data
-chdir /home/ubuntu/{myProject}
-exec venv/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/{myProject}/{projectName}.sock {projectName}.wsgi:application
+chdir /home/ubuntu/{myRepoName}
+exec venv/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/{myRepoName}/{projectName}.sock {projectName}.wsgi:application
 ```
 
 Here's what's actually happening:
