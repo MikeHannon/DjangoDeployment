@@ -183,10 +183,10 @@ Let's actually set up the database.
 ```bash
 ubunutu14> sudo su - postgres
 ubunutu14> psql
-ubunutu14> newPrompt# CREATE DATABASE myproject; #matches the name in the DATABASES
-ubunutu14> newPrompt# CREATE USER mikehannon WITH PASSWORD 'passwordYO'; #username is not in quotes, but password is, and both should match what you put into settings.py.
-ubunutu14> newPrompt# GRANT ALL PRIVILEGES ON DATABASE myproject TO mikehannon;
-ubunutu14> newPrompt# \q #quits this prompt
+postgres=# CREATE DATABASE myproject; #matches the name in the DATABASES
+postgres=# CREATE USER mikehannon WITH PASSWORD 'passwordYO'; #username is not in quotes, but password is, and both should match what you put into settings.py.
+postgres=# GRANT ALL PRIVILEGES ON DATABASE myproject TO mikehannon;
+postgres=# \q #quits this prompt
 ubunutu14> exit
 ```
 
