@@ -174,7 +174,7 @@ ubuntu@ip-my-ip:~/myRepoName/projectName$ sudo nano settings.py
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '{{myproject}}', # This name must be lowercase!
+        'NAME': 'anyname', # This name must be lowercase but can be anything!
         'USER': 'mikehannon', # you can put whatever you want here
         'PASSWORD': 'passwordYO', # you can put whatever you want here
         'HOST': 'localhost',
@@ -200,9 +200,9 @@ Let's actually set up the database.
 ```bash
 ubuntu@ip-my-ip:~$ sudo su - postgres
 ubuntu@ip-my-ip:~$ psql
-postgres=# CREATE DATABASE {{myproject}}; #matches the name in the DATABASES
+postgres=# CREATE DATABASE anyname; #matches the anyname in the DATABASES and is all lower case!
 postgres=# CREATE USER mikehannon WITH PASSWORD 'passwordYO'; #username is not in quotes, but password is, and both should match what you put into settings.py.
-postgres=# GRANT ALL PRIVILEGES ON DATABASE {{myproject}} TO mikehannon;
+postgres=# GRANT ALL PRIVILEGES ON DATABASE {{projectname}} TO mikehannon;
 postgres=# \q #quits this prompt
 ubuntu@ip-my-ip:~$ exit
 ```
