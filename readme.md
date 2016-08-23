@@ -156,7 +156,9 @@ ubuntu@ip-my-ip:~/myRepoName$ pip install django bcrypt django-extensions
 ubuntu@ip-my-ip:~/myRepoName$ pip install gunicorn
 ubuntu@ip-my-ip:~/myRepoName$ pip install psycopg2
 ```
-
+# NOTE FOR STEP 8 and BELOW
+### Anywhere you see {{myRepoName}} -- replace that whole thing INCLUDING the {{}} with your outer folder name.
+### Anywhere you see {{projectName}} -- replace that whole thing INCLUDING the {{}} with the project folder name.
 # Step 8
 ---
 Navigate into your main project directory (where `settings.py` lives). We're going to use a built-in text editor in the terminal to update the code in `settings.py`. For example:
