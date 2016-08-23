@@ -46,10 +46,10 @@ Time to connect our local repository with the GitHub repo. Return to your termin
 # Step 4
 ----
 
-When finished with your project, let's create a text file that lists our dependencies. This will make it easier to install those dependencies later. In your terminal:
+When finished with your project (with your Django virtual environment active), let's create a text file that lists our dependencies. This will make it easier to install those dependencies later. In your terminal:
 
 ```bash
-> pip freeze > requirements.txt
+(djangoEnv)> pip freeze > requirements.txt
 ```
 
 #### edit this requirements.txt file removing pygraphviz, pydot, mysql and other similar 'tricky' to install pieces.
@@ -197,7 +197,7 @@ ubuntu@ip-my-ip:~$ sudo su - postgres
 ubuntu@ip-my-ip:~$ psql
 postgres=# CREATE DATABASE {{myproject}}; #matches the name in the DATABASES
 postgres=# CREATE USER mikehannon WITH PASSWORD 'passwordYO'; #username is not in quotes, but password is, and both should match what you put into settings.py.
-postgres=# GRANT ALL PRIVILEGES ON DATABASE myproject TO mikehannon;
+postgres=# GRANT ALL PRIVILEGES ON DATABASE {{myproject}} TO mikehannon;
 postgres=# \q #quits this prompt
 ubuntu@ip-my-ip:~$ exit
 ```
