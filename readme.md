@@ -149,7 +149,10 @@ If everything looks good, let's make a virtual environment in our cloud server!
 ```bash
 ubuntu@ip-my-ip:~/myRepoName$ virtualenv venv
 ubuntu@ip-my-ip:~/myRepoName$ source venv/bin/activate
-ubuntu@ip-my-ip:~/myRepoName$ pip install -r requirements.txt
+```
+~~ubuntu@ip-my-ip:~/myRepoName$ pip install -r requirements.txt~~
+```bash
+ubuntu@ip-my-ip:~/myRepoName$ pip install django bcrypt django-extensions
 ubuntu@ip-my-ip:~/myRepoName$ pip install gunicorn
 ubuntu@ip-my-ip:~/myRepoName$ pip install psycopg2
 ```
