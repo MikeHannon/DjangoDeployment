@@ -75,7 +75,7 @@ Make sure to `add`, `commit` and `push` your final changes to GitHub. Once you l
 ###Time to set up security settings
 + Click the *Edit security groups* link in the left hand column, choose the security group, (e.g. launch-wizard-1) and edit/add the following *Inbound* rules
 + SSH type should be sourced to MyIP
-+ HTTP type should be sourced to *Anywhere* (this has to be updated everytime you change IP addresses. It adds a level of security, but can be annoying to maintain.)
++ HTTP and HTTPS type should be sourced to *Anywhere* (this has to be updated everytime you change IP addresses. It adds a level of security, but can be annoying to maintain.)
 
 ##Click *Review and Launch*
 
