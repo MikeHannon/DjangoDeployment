@@ -149,9 +149,9 @@ If everything looks good, let's make a virtual environment in our cloud server!
 ```bash
 ubuntu@ip-my-ip:~/myRepoName$ virtualenv venv
 ubuntu@ip-my-ip:~/myRepoName$ source venv/bin/activate
-ubuntu@ip-my-ip:~/myRepoName$ pip install -r requirements.txt
-ubuntu@ip-my-ip:~/myRepoName$ pip install gunicorn
-ubuntu@ip-my-ip:~/myRepoName$ pip install psycopg2
+(venv)ubuntu@ip-my-ip:~/myRepoName$ pip install -r requirements.txt
+(venv)ubuntu@ip-my-ip:~/myRepoName$ pip install gunicorn
+(venv)ubuntu@ip-my-ip:~/myRepoName$ pip install psycopg2
 ```
 
 # Step 8
@@ -159,8 +159,8 @@ ubuntu@ip-my-ip:~/myRepoName$ pip install psycopg2
 Navigate into your main project directory (where `settings.py` lives). We're going to use a built-in text editor in the terminal to update the code in `settings.py`. For example:
 
 ```bash
-ubuntu@ip-my-ip:~/myRepoName$ cd {{projectName}}
-ubuntu@ip-my-ip:~/myRepoName/projectName$ sudo nano settings.py
+(venv)ubuntu@ip-my-ip:~/myRepoName$ cd {{projectName}}
+(venv)ubuntu@ip-my-ip:~/myRepoName/projectName$ sudo nano settings.py
 ```
 
 `settings.py` is now open for editing. Change the following:
@@ -193,8 +193,8 @@ Now just `ctrl-X` and save! We just set up our `settings.py` for a postgres data
 Let's actually set up the database.
 
 ```bash
-ubuntu@ip-my-ip:~$ sudo su - postgres
-ubuntu@ip-my-ip:~$ psql
+(venv)ubuntu@ip-my-ip:~$ sudo su - postgres
+(venv)ubuntu@ip-my-ip:~$ psql
 postgres=# CREATE DATABASE {{myproject}}; #matches the name in the DATABASES
 postgres=# CREATE USER mikehannon WITH PASSWORD 'passwordYO'; #username is not in quotes, but password is, and both should match what you put into settings.py.
 postgres=# GRANT ALL PRIVILEGES ON DATABASE {{myproject}} TO mikehannon;
