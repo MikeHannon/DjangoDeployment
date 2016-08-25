@@ -296,7 +296,7 @@ Remove the # This should be just the digits from AWS public ip! statement
 Run `ctrl-x` and save.
 
 
-Now in terminal, run the following:
+Now in terminal, run the following (taking note of the space after {{projectName}}):
 
 ```bash
 ubuntu@ip-my-ip:~$ sudo ln -s /etc/nginx/sites-available/{{projectName}} /etc/nginx/sites-enabled
