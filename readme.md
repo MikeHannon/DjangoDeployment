@@ -310,4 +310,4 @@ Take a careful look at everything that's in that file. Compare these names to th
 ```bash
 ubuntu@ip-my-ip:~$ sudo service nginx restart
 ```
-If you get an *OK*, hopefully you are rockin and rollin' and your app is deployed! Go to the public domain and bask in it's brilliance!
+If you get an *OK*, hopefully you are rockin and rollin' and your app is deployed! Go to the public domain and bask in its brilliance!
