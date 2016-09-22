@@ -152,9 +152,9 @@ ubuntu@ip-my-ip:~/myRepoName$ source venv/bin/activate
 ```
 ~~ubuntu@ip-my-ip:~/myRepoName$ pip install -r requirements.txt~~
 ```bash
-ubuntu@ip-my-ip:~/myRepoName$ pip install django bcrypt django-extensions
-ubuntu@ip-my-ip:~/myRepoName$ pip install gunicorn
-ubuntu@ip-my-ip:~/myRepoName$ pip install psycopg2
+(venv) ubuntu@ip-my-ip:~/myRepoName$ pip install django bcrypt django-extensions
+(venv) ubuntu@ip-my-ip:~/myRepoName$ pip install gunicorn
+(venv) ubuntu@ip-my-ip:~/myRepoName$ pip install psycopg2
 ```
 # NOTE FOR STEP 8 and BELOW
 ### Anywhere you see {{myRepoName}} -- replace that whole thing INCLUDING the {{}} with your outer folder name.
@@ -164,8 +164,8 @@ ubuntu@ip-my-ip:~/myRepoName$ pip install psycopg2
 Navigate into your main project directory (where `settings.py` lives). We're going to use a built-in text editor in the terminal to update the code in `settings.py`. For example:
 
 ```bash
-ubuntu@ip-my-ip:~/myRepoName$ cd {{projectName}}
-ubuntu@ip-my-ip:~/myRepoName/projectName$ sudo nano settings.py
+(venv) ubuntu@ip-my-ip:~/myRepoName$ cd {{projectName}}
+(venv) ubuntu@ip-my-ip:~/myRepoName/projectName$ sudo nano settings.py
 ```
 
 `settings.py` is now open for editing. Change the following:
@@ -198,8 +198,8 @@ Now just `ctrl-X` and save! We just set up our `settings.py` for a postgres data
 Let's actually set up the database.
 
 ```bash
-ubuntu@ip-my-ip:~$ sudo su - postgres
-ubuntu@ip-my-ip:~$ psql
+(venv) ubuntu@ip-my-ip:~$ sudo su - postgres
+(venv) ubuntu@ip-my-ip:~$ psql
 postgres=# CREATE DATABASE anyname; #matches the anyname in the DATABASES and is all lower case!
 postgres=# CREATE USER mikehannon WITH PASSWORD 'passwordYO'; #username is not in quotes, but password is, and both should match what you put into settings.py.
 postgres=# GRANT ALL PRIVILEGES ON DATABASE {{projectname}} TO mikehannon;
@@ -296,7 +296,7 @@ Remove the # This should be just the digits from AWS public ip! statement
 Run `ctrl-x` and save.
 
 
-Now in terminal, run the following:
+Now in terminal, run the following (taking note of the space after {{projectName}}):
 
 ```bash
 ubuntu@ip-my-ip:~$ sudo ln -s /etc/nginx/sites-available/{{projectName}} /etc/nginx/sites-enabled
@@ -310,4 +310,4 @@ Take a careful look at everything that's in that file. Compare these names to th
 ```bash
 ubuntu@ip-my-ip:~$ sudo service nginx restart
 ```
-If you get an *OK*, hopefully you are rockin and rollin' and your app is deployed! Go to the public domain and bask in it's brilliance!
+If you get an *OK*, hopefully you are rockin and rollin' and your app is deployed! Go to the public domain and bask in its brilliance!
