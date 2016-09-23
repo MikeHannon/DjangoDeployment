@@ -195,7 +195,7 @@ Now just `ctrl-X` and save! We just set up our `settings.py` for a postgres data
 # Step 9
 ---
 
-Let's actually set up the database.
+Let's actually set up the database.  Note that all of the commands in the Postgres shell must end with a semicolon.
 
 ```bash
 (venv) ubuntu@ip-my-ip:~$ sudo su - postgres
