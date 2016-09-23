@@ -77,8 +77,8 @@ Make sure to `add`, `commit` and `push` your final changes to GitHub. Once you l
 
 ###Time to set up security settings
 + Click the *Edit security groups* link in the left hand column, choose the security group, (e.g. launch-wizard-1) and edit/add the following *Inbound* rules
-+ SSH type should be sourced to MyIP
-+ HTTP type should be sourced to *Anywhere* (this has to be updated everytime you change IP addresses. It adds a level of security, but can be annoying to maintain.)
++ SSH type should be sourced to MyIP (this has to be updated everytime you change IP addresses. It adds a level of security, but can be annoying to maintain.)
++ HTTP and HTTPS types should be sourced to *Anywhere* 
 
 ##Click *Review and Launch*
 
@@ -96,7 +96,7 @@ Back in your terminal, navigate to the folder that holds the key file you just d
 > cd My/Keys/Folder
 ```
 
-Run a `chmod` command to alter the permissioning of your key file.
+*Mac users:* Run a `chmod` command to alter the permissioning of your key file.
 
 ```bash
 > chmod 400 my-key-pair.pem
@@ -195,14 +195,14 @@ Now just `ctrl-X` and save! We just set up our `settings.py` for a postgres data
 # Step 9
 ---
 
-Let's actually set up the database.
+Let's actually set up the database.  Note that all of the commands in the Postgres shell must end with a semicolon.
 
 ```bash
 (venv) ubuntu@ip-my-ip:~$ sudo su - postgres
 (venv) ubuntu@ip-my-ip:~$ psql
 postgres=# CREATE DATABASE anyname; #matches the anyname in the DATABASES and is all lower case!
 postgres=# CREATE USER mikehannon WITH PASSWORD 'passwordYO'; #username is not in quotes, but password is, and both should match what you put into settings.py.
-postgres=# GRANT ALL PRIVILEGES ON DATABASE {{projectname}} TO mikehannon;
+postgres=# GRANT ALL PRIVILEGES ON DATABASE anyname TO mikehannon;
 postgres=# \q #quits this prompt
 ubuntu@ip-my-ip:~$ exit
 ```
