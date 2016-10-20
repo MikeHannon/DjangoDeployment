@@ -23,7 +23,7 @@ pip freeze > requirements.txt
 
 **Important!**
 
-We're about to initialize a new git repo. Your git repo must be initialized within the outer project folder. Double check your location before you initialize your repo.
+We're about to initialize a new git repo. Your git repo must be initialized within the outer project folder, this is the same level as your `manage.py` file. If you `ls` and don't see `manage.py`, you are in the wrong place. Double check your location before you initialize your repo.
 
 First we'll create a `.gitignore` file.
 
@@ -38,7 +38,7 @@ Open your `.gitignore` file in your text editor and add the lines:
  venv/
  ```
  
-As the name implies, your gitignore file tells git to ignore any files, directories, etc. you include in the file.  In this case, we're instructing git to ignore all files with the extension "pyc"., as well as your virtual environment, if you have placed one inside of your project folder.
+As the name implies, your gitignore file tells git to ignore any files, directories, etc. you include in the file.  In this case, we're instructing git to ignore all files with the extension "pyc", as well as your virtual environment, if you have placed one inside of your project folder.
 
 We know this is familiar, but here's a reminder of how to initialize a new repo:
 
@@ -96,7 +96,7 @@ Once you login to AWS and set up a cloud server, you'll be pulling code from you
 Back in your terminal, cd to the folder that holds the key file you just downloaded.
 
 ```bash
-> cd secretDeveloperStuff/keys
+> cd projects/AWS
 ```
 
 Now we're ready to use our .pem file to connect to the AWS instance! That means, in your AWS console, connect to your instance and use the supplied code in your terminal (PC users: use a bash terminal to do this).
