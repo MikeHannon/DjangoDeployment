@@ -99,7 +99,7 @@ Back in your terminal, cd to the folder that holds the key file you just downloa
 > cd projects/AWS
 ```
 
-Now we're ready to use our .pem file to connect to the AWS instance! That means, in your AWS console, connect to your instance and use the supplied code in your terminal (PC users: use a bash terminal to do this).
+Now we're ready to use our .pem file to connect to the AWS instance! In your AWS console, click connect and use the supplied code in your terminal (PC users: use a bash terminal to do this).
 
 Back in your AWS console click the connect button at the top of your screen here:
 ![Alt text](imgs/12_connect.png)
