@@ -190,14 +190,12 @@ If you wish to exit without saving your changes type `:q!` after pressing escape
 
 If you wish to save changes without exiting type `:w` after escape.
 
-Navigate back to the folder that holds `manage.py`. Make sure your virtual environment is activated!
+Run `cd ..` to get back to the folder that holds `manage.py`. Make sure your virtual environment is activated!
 
 ```bash
 (venv) ubuntu@54.162.31.253:~myRepoName$ python manage.py collectstatic #say yes
 ```
 ## Step 9: Gunicorn
-
-cd back up one level by typing `cd ..` in your terminal.
 
 Now let's test running gunicorn by entering the following:
 
