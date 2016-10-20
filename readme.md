@@ -202,7 +202,7 @@ cd back up one level by typing `cd ..` in your terminal.
 Now let's test running gunicorn by entering the following:
 
 ```bash
-(venv) ubuntu@54.162.31.253:~myRepoName$ gunicorn --bind 0.0.0.0:8000 projectName.wsgi:application
+(venv) ubuntu@54.162.31.253:~myRepoName$ gunicorn --bind 0.0.0.0:8000 {{projectName}}.wsgi:application
 ```
 
 Run `ctrl-c` and `deactivate` your virtual environment.
