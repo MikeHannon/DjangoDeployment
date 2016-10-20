@@ -31,15 +31,15 @@ First we'll create a `.gitignore` file.
 touch .gitignore
 ```
 
+As the name implies, your gitignore file tells git to ignore any files, directories, etc. you include in the file.  In this case, we're instructing git to ignore all files with the extension "pyc", as well as your virtual environment, if you have placed one inside of your project folder, in your gitingnore file, `venv/` should be replaced with the name of your virtual environment.
+
 Open your `.gitignore` file in your text editor and add the lines:
 
  ```
  *.pyc
  venv/
  ```
- 
-As the name implies, your gitignore file tells git to ignore any files, directories, etc. you include in the file.  In this case, we're instructing git to ignore all files with the extension "pyc", as well as your virtual environment, if you have placed one inside of your project folder.
-
+	
 We know this is familiar, but here's a reminder of how to initialize a new repo:
 
 ```bash
@@ -96,7 +96,7 @@ Once you login to AWS and set up a cloud server, you'll be pulling code from you
 Back in your terminal, cd to the folder that holds the key file you just downloaded.
 
 ```bash
-> cd projects/AWS
+> cd /projects/AWS
 ```
 
 Now we're ready to use our .pem file to connect to the AWS instance! In your AWS console, click connect and use the supplied code in your terminal (PC users: use a bash terminal to do this).
