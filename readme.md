@@ -107,7 +107,7 @@ Back in your AWS console click the connect button at the top of your screen here
 A popup will appear with instructions on how to connect.  If you are a mac user, run the chmod command, otherwise, skip this command and copy and paste the line starting with ssh into your terminal.
 ![Alt text](imgs/13_connect_pop.png)
 
-If all goes well, you should be in your Ubuntu cloud server. Your terminal should show something like this in the far left of your prompt:
+You might have to type yes and wait for a few seconds to a minute before you are connected, but if all goes well, you should be in your Ubuntu cloud server. Your terminal should show something like this in the far left of your prompt:
 
 ```bash
 ubuntu@54.162.31.253:~$ #Commands you write appear here
