@@ -302,7 +302,7 @@ SQLite is great for testing, but it's not really efficient in the context of rea
 
 Although the developers of SQLite have done much to improve its performance, particularly in version 3, it suffers from some lack efficient write concurrency. If your site has a lot of traffic a queue begins to form, waiting for write acess to the database.  Before long, your response speed will slow to a crawl.  This happens only on high-traffic sites, however. 
 
-MySQL databases, on the other hand, are incredibly fast, and very good at performing multiple operations concurrently.  In addition, MySQL can store and incredibly large amount of data, and so is said to scale well.
+MySQL databases, on the other hand, are incredibly fast, and very good at performing multiple operations concurrently.  In addition, MySQL can store an incredibly large amount of data, and so is said to scale well.
 
 This might never be a consideration for small to medium sized projects, but is key information in the real world. Very soon you may be working for a company that handles a large volume of requests, and it is important to know why depending on a SQLite database alone is not a practical solution for enterprise or large startups.  
 
@@ -313,13 +313,13 @@ First, we'll need to install everything necessary to run MySQL from our deployme
 ```bash
 >sudo apt-get install libmysqlclient-dev
 ```
-We'll create a MySQL database and database user for our Django application. After running the command below, set your mysql password for root as root. Then let's just make sure that we were able to install it correctly. The second command should sign you into your mysql server. 
+Let's install mysql-server, then we'll create a MySQL database and database user for our Django application. After running the command below, set your mysql password for root as root.
 
 ```bash
 >sudo apt-get install mysql-server
 ```
 
-Then let's just make sure that we were able to install it correctly. First we're going to switch over to root user and then the second command should sign you into your mysql server. 
+Then let's just make sure that we were able to install it correctly. First we're going to switch over to root user.
 
 ```bash
 >sudo su
@@ -327,20 +327,22 @@ Then let's just make sure that we were able to install it correctly. First we're
 
 The su command stand for "switch user". If we don't specify a user, Linux/Unix defaults to root user, which is the administrative user. This command provides access to everything in your system, and therefore can be dangerous if you aren't familiar with the effect of the commands you're using. Be careful not to type any commands other than the following until we exit root user a little later.
 
+The command below will open up MySQL console. You have not interacted with MySQL in the command line before because we used MySQL workbench to interact instead. We may not have a GUI available, but it's pretty easy to interact with MySQL in the command line.
+
 ```bash
 mysql -u root -p
 ```
 You'll see the mysql prompt where we can set up our database.
 
-Let's create a the database for our project. You can call it whatever you want but something that relates to your project will be helpful. Note, every command must end with a semi-colon. Make sure to check for them if you have any errors or your commands do not run. Now to create a database on our mysql server
+Let's create a the database for our project. You can call it whatever you want but we recommend giving the name of your project. Note, every command must end with a semi-colon. Make sure to check for them if you have any errors or your commands do not run. Now to create a database on our mysql server.
 
 CREATE DATABASE {{projectName}};
 
 Exit the MySQL prompt by typing `exit;`
 
-**Important!!! After exiting the MySQL promt you MUST type the command `exit`!**
+**Important!!! After exiting the MySQL promt you MUST type the command `exit` again!**
 
-That's right, we're typing exit twice.  The first time is to exit the MySQL prompt, the second time is to deactivate the root user.  As we warned above, this is a critical step and can result in bad installations if we skip it.
+That's right, we're typing exit twice.  The first time is to exit the MySQL prompt, the second time is to deactivate the root user.  As we warned above, this is a critical step and can result in some problems with installations if we skip it.
 
 Now that we have MySQL all set up, we are ready to change some lines in our `settings.py` document and we'll be all ready to start working with our brand new MySQL database!
 
@@ -350,7 +352,7 @@ If you're in your outter project directory, you must cd into the directory conta
 >cd {{projectName}}
 >sudo vim settings.py
 ```
-Change your databases to look like below:
+Change your the databases section in settings.py to look like below:
 
 ```bash
 DATABASES = {
