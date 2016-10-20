@@ -344,9 +344,9 @@ Exit the MySQL prompt by typing `exit;`
 
 That's right, we're typing exit twice.  The first time is to exit the MySQL prompt, the second time is to deactivate the root user.  As we warned above, this is a critical step and can result in some problems with installations if we skip it.
 
-Now that we have MySQL all set up, we are ready to change some lines in our `settings.py` document and we'll be all ready to start working with our brand new MySQL database!
+Now that we have MySQL all set up, we are ready to change some lines in our `settings.py` document and we can start working with our MySQL database!
 
-If you're in your outter project directory, you must cd into the directory containing your `settings.py` file. If you have followed instructions, you will type:
+If you're in your outer project directory, you must cd into the directory containing your `settings.py` file. If you have followed instructions, you will type:
 
 ```bash 
 >cd {{projectName}}
@@ -366,14 +366,15 @@ DATABASES = {
     }
 }
 ```
+remember how to exit vim, by pressing `esc`, `:wq`
 
-We're almost done! Now the only thing left to do is to make our migrations!
+We're almost done! Now the only thing left to do is to make migrations!
 
 ```bash
 (venv) ubuntu@54.162.31.253:~myRepoName$ python manage.py makemigrations
 (venv) ubuntu@54.162.31.253:~myRepoName$ python manage.py migrate
 ```
-Now we just need to restart nginx `sudo service nginx restart`
+Now just need to restart nginx `sudo service nginx restart`
 
 Now visit your site! You should be finished at this point, with a fully functioning site.  Your old data will not show up, but you should be able to perform all operations as you did previously.
 
