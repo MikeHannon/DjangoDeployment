@@ -7,6 +7,8 @@ When you take your belt exam you will simply replace the courses project with yo
 
 We're going to use github to create a copy of our project in deployment.
 
+In the first 2 steps, we will be navigating around on your local machine.  If you are using unix(mac), or linux, these commands are for you.  If you are on Windows, you will want to use git bash in order for these commands to run properly.
+
 ## Step 1: Getting Started
 
 Get started by activating your virtual environment. 
@@ -156,7 +158,7 @@ If everything looks good, let's make that virtual environment, and activate it.
 ```bash
 ubuntu@54.162.31.253:~/myRepoName$ virtualenv venv
 ubuntu@54.162.31.253:~/myRepoName$ source venv/bin/activate
-(venv)ubuntu@54.162.31.253:~/myRepoName$ pip install -r requirements.txt~~
+(venv)ubuntu@54.162.31.253:~/myRepoName$ pip install -r requirements.txt
 (venv) ubuntu@54.162.31.253:~/myRepoName$ pip install django bcrypt django-extensions
 (venv) ubuntu@54.162.31.253:~/myRepoName$ pip install gunicorn
 ```
