@@ -78,7 +78,7 @@ Make sure to `add`, `commit` and `push` your final changes to GitHub. Once you l
 ###Time to set up security settings
 + Click the *Edit security groups* link in the left hand column, choose the security group, (e.g. launch-wizard-1) and edit/add the following *Inbound* rules
 + SSH type should be sourced to MyIP (this has to be updated everytime you change IP addresses. It adds a level of security, but can be annoying to maintain.)
-+ HTTP and HTTPS types should be sourced to *Anywhere* 
++ HTTP and HTTPS types should be sourced to *Anywhere*
 
 ##Click *Review and Launch*
 
@@ -102,7 +102,10 @@ Back in your terminal, navigate to the folder that holds the key file you just d
 > chmod 400 my-key-pair.pem
 ```
 
-Now we're ready to use that file to connect to the AWS instance! That means, in your AWS console, connect to your instance and use the supplied code in your terminal (PC users: use a bash terminal or putty to do this).
+Now we're ready to use that file to connect to the AWS instance! That means, in your AWS console, click the Connect button to get instructions to connect to your instance and use the supplied code in your terminal (PC users: use a bash terminal or putty to do this). Or shortcut to this:
+```
+> ssh -i name_of_pem_file.pem ubuntu@your.public.ip_address.here
+```
 
 If all goes well, you should be in your Ubuntu cloud server! Yay you! Your terminal should show something like this in the far left of your prompt:
 
@@ -199,12 +202,12 @@ Let's actually set up the database.  Note that all of the commands in the Postgr
 
 ```bash
 (venv) ubuntu@ip-my-ip:~$ sudo su - postgres
-(venv) ubuntu@ip-my-ip:~$ psql
+postgres_prompt1:~$ psql
 postgres=# CREATE DATABASE anyname; #matches the anyname in the DATABASES and is all lower case!
 postgres=# CREATE USER mikehannon WITH PASSWORD 'passwordYO'; #username is not in quotes, but password is, and both should match what you put into settings.py.
 postgres=# GRANT ALL PRIVILEGES ON DATABASE anyname TO mikehannon;
 postgres=# \q #quits this prompt
-ubuntu@ip-my-ip:~$ exit
+postgres_prompt1:~$ exit
 ```
 
 # Step 10
