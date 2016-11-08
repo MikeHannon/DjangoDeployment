@@ -306,9 +306,9 @@ If your server restarted correctly, you will see *[OK]* on the right hand side o
 
 ##Common errors and how to find them:
 
-1. 502, bad gateway: there is a problem in your code. Hint: any error starting with 5 indicates a server error
-2. Your gunicorn process won't start:  Check your .conf file; typos and wrong file paths are common mistakes
-3. Your nginx restart fails: Check your nginx file in the sites-available directory.  Common problems include typos and forgetting to insert your project name where indicated.
+*  502, bad gateway: there is a problem in your code. Hint: any error starting with 5 indicates a server error
+* Your gunicorn process won't start:  Check your .conf file; typos and wrong file paths are common mistakes
+* Your nginx restart fails: Check your nginx file in the sites-available directory.  Common problems include typos and forgetting to insert your project name where indicated.
 
 
 ## Step 12.01: Adding a MySQL server (optional)
