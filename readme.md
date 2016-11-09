@@ -1,5 +1,5 @@
-
-# Django Deployment V1.02
+    
+# Django Deployment V1.03
 
 # Step 1
 ----
@@ -314,3 +314,5 @@ Take a careful look at everything that's in that file. Compare these names to th
 ubuntu@ip-my-ip:~$ sudo service nginx restart
 ```
 If you get an *OK*, hopefully you are rockin and rollin' and your app is deployed! Go to the public domain and bask in its brilliance!
+##Also:
+if you are receiving a 502 or DisallowedHost error, add 'localhost', '127.0.0.1', '{{your.aws.public.address}}' to ALLOWED_HOSTS
