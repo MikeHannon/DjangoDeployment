@@ -67,7 +67,7 @@ Once you login to AWS and set up a cloud server, you'll be pulling code from you
 ![Alt text](imgs/2_ec2.png)
 3. Launch a new instance from the EC2 Dashboard, as shown below:
 ![Alt text](imgs/3_launch_instance.png)
-4. Select *Ubuntu Server 14.04* option
+4. Select *Ubuntu Server 14.04* option.  Be sure to scroll close to the bottom to find the correct version of Ubuntu. The opton closest to the top will get you a newer version, which doesn't play well with pip and virtualenv.
 ![Alt text](imgs/4_ubuntu_1404.png)
 5. Select *t2.micro* option and click *Review and Launch*
 ![Alt text](imgs/5_review_launch.png)
