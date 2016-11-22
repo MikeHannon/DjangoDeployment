@@ -115,7 +115,7 @@ You might have to type yes and wait for a few seconds to a minute before you are
 ubuntu@54.162.31.253:~$ #Commands you write appear here
 ```
 
-## Step 5: Deploy!
+## Step 5: EC2 Server Application Configuration
 
 Now we are going to set up our remote server for deployment. Our server is nothing more than a small allocated space on some else's larger computer (in this case, the big computer belongs to Amazon!).  That space has an installed operating system, just like your computer.  In this case we are using a distribution of linux called Ubuntu, version 14.04.
 
@@ -162,10 +162,11 @@ ubuntu@54.162.31.253:~/myRepoName$ source venv/bin/activate
 (venv) ubuntu@54.162.31.253:~/myRepoName$ pip install django bcrypt django-extensions
 (venv) ubuntu@54.162.31.253:~/myRepoName$ pip install gunicorn
 ```
-## Step 8: Collect Static Files
-### NOTE FOR STEP 8 and BELOW
+## Step 6: Collect Static Files
+### NOTE FOR STEP 6 and BELOW
 ### Anywhere you see {{repoName}} -- replace that whole thing INCLUDING the {{}} with your outer folder name.
 ### Anywhere you see {{projectName}} -- replace that whole thing INCLUDING the {{}} with the project folder name.
+### Anywhere you see {{yourEC2.public.ip}} -- replace that whole thing INCLUDING the {{}} with the public IP address of your newly created server.
 
 If you named your repo something different from your project, the repo name and project name may be different, but it is ok if they are the same.
 
@@ -181,8 +182,11 @@ Navigate into your main project directory (where `settings.py` lives). We're goi
 Add the following (this will allow you to serve static content):
 
 ```python
-#Inside settings.py
+# Inside settings.py
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+# Also enter the line below, repalcing {{yourEC2.public.ip}} 
+# with your server's public IP address (leave the quotation marks)
+ALLOWED_HOSTS = ['{{yourEC2.public.ip}}']
 ```
 Once you are finished making these additions, tell the vim program to exit insert mode by pressing the escape key and then type `:wq` to save your changes and quit vim.
 
@@ -195,9 +199,9 @@ Run `cd ..` to get back to the folder that holds `manage.py`. Make sure your vir
 ```bash
 (venv) ubuntu@54.162.31.253:~myRepoName$ python manage.py collectstatic #say yes
 ```
-## Step 9: Gunicorn
+## Step 7: Gunicorn 
 
-Now let's test running gunicorn by entering the following:
+Now let's test gunicorn by `cd ..` up one level and then enter the following:
 
 ```bash
 (venv) ubuntu@54.162.31.253:~myRepoName$ gunicorn --bind 0.0.0.0:8000 {{projectName}}.wsgi:application
@@ -250,7 +254,7 @@ You should see a message confirming that your process has started.
 
 If you see instead a message that your job failed to start, check to make sure your `.conf` file is correct, with no typos, and all pieces that needed to be changed done correctly.
 
-## Step 10: Nginx
+## Step 8: Nginx
 ---
 
 One final file to edit. From your terminal:
@@ -264,7 +268,7 @@ Add this to the following, editing what's inside curly brackets {{}}:
 ```
 server {
     listen 80;
-    server_name {{yourEC2.public.ip.here}}; # This should be just the digits from AWS public ip!
+    server_name {{yourEC2.public.ip}}; # This should be just the digits from AWS public ip!
     location = /favicon.ico { access_log off; log_not_found off; }
     location /static/ {
         root /home/ubuntu/{{myRepoName}};
@@ -289,7 +293,7 @@ ubuntu@54.162.31.253:~$ sudo nginx -t
 
 Take a careful look at everything that's in that file. Compare these names to the `gunicorn` names, and what you actually are using!
 
-##Finally:
+## Step 9 - Finally:
 
 We will remove the nginx default site display from directory sites-enabled, by running the following in your terminal.
 
@@ -304,14 +308,14 @@ ubuntu@54.162.31.253:~$ sudo service nginx restart
 ```
 If your server restarted correctly, you will see *[OK]* on the right hand side of your terminal, on the same line as your command, and your app is deployed! Go to the public domain and you app should be there. If you see anything other than your app, review your server file for errors.
 
-##Common errors and how to find them:
+## Common errors and how to find them:
 
-*  502, bad gateway: there is a problem in your code. Hint: any error starting with 5 indicates a server error
+* 502, bad gateway: there is a problem in your code. Hint: any error starting with 5 indicates a server error
 * Your gunicorn process won't start:  Check your .conf file; typos and wrong file paths are common mistakes
 * Your nginx restart fails: Check your nginx file in the sites-available directory.  Common problems include typos and forgetting to insert your project name where indicated.
 
 
-## Step 12.01: Adding a MySQL server (optional)
+## Step 10: Adding a MySQL server (optional)
 
 SQLite is great for testing, but it's not really efficient in the context of real-world use.  This may be a bit too much to go into here, but let's look at a quick summary of why that is, and what we'll use instead.
 
@@ -393,7 +397,7 @@ Now just need to restart nginx `sudo service nginx restart`
 
 Now visit your site! You should be finished at this point, with a fully functioning site.  Your old data will not show up, but you should be able to perform all operations as you did previously.
 
-## Step 12.02: Reconnecting
+## Step 10.01: Reconnecting
 
 Remember how we said that we would have to change our security settings every time our IP changes?  The bad news is that this will be every time we try to reconnect.  The good news is that it's easy to change those settings, if you know where to look.
 
