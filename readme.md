@@ -83,7 +83,8 @@ Once you login to AWS and set up a cloud server, you'll be pulling code from you
 ![Alt text](imgs/7_add_rule.png)
 3. Click the add a rule button twice to add HTTP and HTTPS, source set to *Anywhere*, and then click ***Click Review and Launch:***
 ![Alt text](imgs/8_completed_rules.png)
-4. You'll be asked to create a key file. This is what will let us connect and control the server from our local machine.
+4. Click the add a rule button and create a custom TCP rule, the port to 8000 and the source to My IP.
+5. You'll be asked to create a key file. This is what will let us connect and control the server from our local machine.
 
 	Name your pem key whatever makes the most sense to you as shown in the next step.  Give it a generic name, not the name of your project, as we will be re-using this instance.
 
@@ -234,7 +235,127 @@ Now that we have some of our deployment infrastructure complete, let's begin wor
 
 First up, let's git clone our project.
 
-ubuntu@20.669.38.527:~$ git clone
+ubuntu@20.669.38.527:~$ git clone https://github.com/YOURUSERNAME/YOURREPONAME.git
+
+At the moment your current folder directory should looks something like this.
+
+```bash
+- ubuntu
+  - repoName
+    - apps
+    - projectName
+    - ... # other files/folders
+```
+
+Navigate into this project and run `ls` in your terminal. If you don't see `manage.py` as one of the files, *STOP*. Review the setting up GitHub/Git pieces from earlier.
+
+From within the project level folder, let's make some modifications to the settings.py file.
+
+We can make these modifications by typing in the following:
+
+ubuntu@20.669.38.527:~/djangoProject/courses_deployment/Courses$ sudo nano settings.py
+
+Set DEBUG to False, next...
+
+Locate this
+  ALLOWED_HOSTS = []
+
+Now type in the Public IP associated with you server instace, this can be found in the description tab in the AWS instance dashboard.
+
+ALLOWED_HOSTS = ['12.123.123.123']
+
+Next, were going to configure our database settings.
+
+Locate this:
+  DATABASES = { ... }
+
+The current configuration is set to SQLite, and now that we're putting our application into production, we're going to have to change some settings to work with the PostgreSQL database we created earlier.
+
+Change the settings so they mirror this:
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'courses',
+        'USER': 'ubuntu',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
+
+Further down you'll come across a line that describes where static files can be found. We'll need to add a line here so that Nginix will have the ability to handle requests to serve requested static files.
+
+The last two lines in your settings.py file should have these two lines:
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+Save and close by pressing CTRL+X, choosing Yes, and writing to the setting.py file.
+
+Let's see if what we've down works by migrating our project.
+
+Navigate into the project, and run the following commands.
+
+ubuntu@20.669.38.527:~/djangoProject/courses_deployment/Courses$ cd ..
+ubuntu@20.669.38.527:~/djangoProject/courses_deployment$ ./manage.py makemigrations
+ubuntu@20.669.38.527:~/djangoProject/courses_deployment$ ./manage.py migrate
+
+If you encounter any errors, first, read the error that is reported and make necessary changes, if the errors still persist get a fresh pair of eyes to take a look at your recent changes. DO NOT attempt to write your own settings or configurations.
+
+After a sucessful migration, lets create an administrative user for the project.
+
+ubuntu@20.669.38.527:~/djangoProject/courses_deployment$  ./manage.py createsuperuser
+
+The next few prompts will ask your to choose a username, password, and email.
+
+Use 'ubuntu' as your username
+Use your email address
+Enter a password, I used django***
+
+Collect your static files with this command.
+
+ubuntu@20.669.38.527:~/djangoProject/courses_deployment$ ./manage.py collectstatic
+
+Let's test our deployed Django development sever out..
+
+Type in:
+ubuntu@20.669.38.527:~/djangoProject/courses_deployment$ ./manage.py runserver 0.0.0.0:8000
+
+If you see your app, then everything is working and you now have a development server running. This is excellent progress, if you have your admin routing intact in your Django project, you can add /admin to the end of the URL and access your admin panel, use the username and password you typed in when the createsuperuser command was run.
+
+
+---
+creating timchen, password is django***
+ssh-copy-id timchen@54.146.185.204
+this allows you to bypass the .pem key by generating a RSA fingerprint.
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
