@@ -1,5 +1,7 @@
 
+
 #Django Deployment
+
 ----
 Today you will be deploying your Courses app from the Django models chapter.
 
@@ -62,6 +64,7 @@ Once you login to AWS and set up a cloud server, you'll be pulling code from you
 
 >Note: You'll need an AWS account, which you can sign up for [here](http://aws.amazon.com). It's free for a year, so long as you don't have more than 1 (free-tier) instance up at a time!
 
+
 1. Login to AWS Console at [https://aws.amazon.com/](https://aws.amazon.com/)
 2. Once you have logged in you will see your dashboard page:
 ![Alt text](imgs/2_ec2.png)
@@ -96,6 +99,9 @@ Once you login to AWS and set up a cloud server, you'll be pulling code from you
 ##Step 4: Connecting to your remote server
 
 Back in your terminal, cd to the folder that holds the key file you just downloaded.
+=======
+
+
 
 ```bash
 > cd /projects/AWS
@@ -106,8 +112,12 @@ Now we're ready to use our .pem file to connect to the AWS instance! In your AWS
 Back in your AWS console click the connect button at the top of your screen here:
 ![Alt text](imgs/12_connect.png)
 
+
 A popup will appear with instructions on how to connect.  If you are a mac user, run the chmod command, otherwise, skip this command and copy and paste the line starting with ssh into your terminal.
 ![Alt text](imgs/13_connect_pop.png)
+=======
+
+
 
 You might have to type yes and wait for a few seconds to a minute before you are connected, but if all goes well, you should be in your Ubuntu cloud server. Your terminal should show something like this in the far left of your prompt:
 
@@ -197,7 +207,9 @@ If you wish to save changes without exiting type `:w` after escape.
 Run `cd ..` to get back to the folder that holds `manage.py`. Make sure your virtual environment is activated!
 
 ```bash
+
 (venv) ubuntu@54.162.31.253:~myRepoName$ python manage.py collectstatic #say yes
+
 ```
 ## Step 7: Gunicorn 
 
@@ -300,6 +312,7 @@ We will remove the nginx default site display from directory sites-enabled, by r
 ```bash
 ubuntu@54.162.31.253:~$ sudo rm /etc/nginx/sites-enabled/default
 ```
+
 
 Now, all that is left to do is restart your nginx server.
 
@@ -407,3 +420,4 @@ Remember how we said that we would have to change our security settings every ti
 ![Alt text](imgs/15_edit_groups.png)
 3. Now, all that is left to do is let AWS automatically change our IP to the new one. Do this by selecting the dropdown in the SSH row, under source, and select MyIP (it is already selected, but doing so again will refresh your IP to the current one). Once this is done, click save.  Your're ready to SSH into your instance again!
 ![Alt text](imgs/16_update_security_groups.png)
+
