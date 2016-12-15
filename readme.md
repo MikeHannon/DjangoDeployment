@@ -21,9 +21,9 @@ Once you have activated your virtual environment, cd into your project directory
 pip freeze > requirements.txt
 ```
 
-**In your text editor, open your requirements.txt file and remove pygraphviz, pydot and mysql, if present. these modules can be tricky to install and require additional installations, so we remove them now to prevent problems later.**
+**In your text editor, open your requirements.txt file and remove pygraphviz, pydot and mysql if present. these modules can be tricky to install and require additional installations, so we remove them now to prevent problems later.**
 
-##Step 2: Committing
+## Step 2: Committing
 
 **Important!**
 
@@ -69,7 +69,8 @@ Once you login to AWS and set up a cloud server, you'll be pulling code from you
 ![Alt text](imgs/2_ec2.png)
 3. Launch a new instance from the EC2 Dashboard, as shown below:
 ![Alt text](imgs/3_launch_instance.png)
-4. Select *Ubuntu Server 14.04* option.  Be sure to scroll close to the bottom to find the correct version of Ubuntu. The opton closest to the top will get you a newer version, which doesn't play well with pip and virtualenv.
+4. Select *Ubuntu Server 16.04* option.  Be sure to scroll close to the bottom to find the correct version of Ubuntu. The opton closest to the top will get you a newer version, which doesn't play well with pip and virtualenv.
+<!-- replace this image - timchen -->
 ![Alt text](imgs/4_ubuntu_1404.png)
 5. Select *t2.micro* option and click *Review and Launch*
 ![Alt text](imgs/5_review_launch.png)
@@ -121,7 +122,7 @@ A popup will appear with instructions on how to connect.  If you are a mac user,
 You might have to type yes and wait for a few seconds to a minute before you are connected, but if all goes well, you should be in your Ubuntu cloud server. Your terminal should show something like this in the far left of your prompt:
 
 ```bash
-ubuntu@54.162.31.253:~$ #Commands you write appear here
+ubuntu@20.669.38.527:~$ #Commands you write appear here
 ```
 
 ## Step 5: EC2 Server Application Configuration
@@ -133,17 +134,149 @@ Although we have linux, our new computer is otherwise empty.  Let's change that 
 In the terminal:
 
 ```bash
-ubuntu@54.162.31.253:~$ sudo apt-get update
-ubuntu@54.162.31.253:~$ sudo apt-get install python-pip python-dev nginx git
+ubuntu@20.669.38.527:~$ sudo apt-get update
+ubuntu@20.669.38.527:~$ sudo apt-get install python-pip python-dev libpq-dev gresql postgresql-contrib nginx
 ```
 Now that we've installed some packages using apt-get, let's run update again to make sure apt-get knows we've done those installations.  
 
 In addition, you'll use your newly installed pip to install the virtual environment program so that you can now build a brand new virtual environment on your new computer.
 
 ```bash
-ubuntu@54.162.31.253:~$ sudo apt-get update
-ubuntu@54.162.31.253:~$ sudo pip install virtualenv
+ubuntu@20.669.38.527:~$ sudo apt-get update
 ```
+
+<!-- START DATABASE CONFIGURATION -->
+
+Next up let's get our database up and running. Postgres uses a authentication scheme called "peer authentication". This means that if the users operating system matches a valid Postgres username the user can login with no further authentication.
+
+During the Postgres installation, an operation system user was created and named postgres which corresponds to the postgres PostgreSQL admin user. This user will be used to perform admin tasks.
+
+We login by passing in the username like this:
+
+sudo -u postgres psql
+
+You should now see something like this:
+
+postgres=*
+
+This is our PostgreSQL prompt, here we can set up the requirements needed for our Django Project.
+
+Type in:
+NOTE: the semicolon cannot be omitted, it signifies the end of a psql command. The psql prompt is also case sensitive.
+
+postgres=* CREATE DATABASE courses;
+
+Next up, let's create a database user and set a password.
+
+Type in:
+
+postgres=* CREATE USER ubuntu WITH PASSWORD 'password';
+
+Now, let's modify a few of the connection parameters, this speeds up our database operations.
+
+Type in:
+postgres=* ALTER ROLE ubuntu SET client_encoding TO 'utf8';
+
+then ...
+postgres=* ALTER ROLE ubuntu SET default_transaction_isolation TO 'read committed';
+
+then ...
+postgres=* ALTER ROLE ubuntu SET timezone TO 'UTC';
+
+These are all default settings recommend by the Django Project.
+https://docs.djangoproject.com/en/1.9/ref/databases/#optimizing-postgresql-s-configuration
+
+Now let's give out user access to administrate on the database.
+
+Type in:
+
+postgres=* GRANT ALL PRIVILEGES ON DATABASE courses TO ubuntu;
+
+Let's leave the psql prompt and move on. To do this..
+
+Type in:
+
+postgres=* \q
+
+<!-- END DATABASE CONFIGURATION -->
+
+<!-- START VIRTUAL ENVIRONMENT CONFIGURATION -->
+
+Remember our virtual environments? Our Django project will need one on our Ubuntu machine as well. Note that now that we have SSH in a linux machine, we can all use \*nix commands.
+
+First up, we have to get virutalenv onto our ubuntu machine.
+
+ubuntu@20.669.38.527:~$ sudo pip install virtualenv
+
+Now that we have virtualenv installed, let's start putting together the project!
+
+ubuntu@20.669.38.527:~$ mkdir djangoProject
+ubuntu@20.669.38.527:~$ cd djangoProject
+ubuntu@20.669.38.527:~$ virtualenv djangoEnv
+
+These commands, created a djangoProject folder, navigated into the project folder, and created a virtual environment. Before we can make changes to our virtual environment we have to activate it. Do so by typing this in:
+
+ubuntu@20.669.38.527:~$ source djangoEnv/bin/activate
+
+You should now see a (djangoEnv) in front of your normal terminal prompt, this let's us know that our virtual environment is active.
+
+Now we have to install Django, Gunicorn, and psycopg which is our PostgreSQL adaptor. If you'd like to learn more about each of these components check out their documentation!
+
+To install these components send this command into your terminal:
+
+(djangoEnv) ubuntu@20.669.38.527:~$ pip install django gunicorn psycopg2
+
+<!-- END VIRTUAL ENVIRONMENT CONFIGURATION -->
+
+<!-- BEGIN PORTING LOCAL DEV DJANGO APP TO PRODUCTION DJANGO APP -->
+
+Now that we have some of our deployment infrastructure complete, let's begin working on configuring our Django project.
+
+First up, let's git clone our project.
+
+ubuntu@20.669.38.527:~$ git clone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- BEgin OLD CONTENT  -->
 
 Now you'll clone your project from GitHub. You'll type into your terminal something that looks like this:
 
@@ -165,11 +298,11 @@ Navigate into this project and run `ls` in your terminal. If you don't see `mana
 If everything looks good, let's make that virtual environment, and activate it.
 
 ```bash
-ubuntu@54.162.31.253:~/myRepoName$ virtualenv venv
-ubuntu@54.162.31.253:~/myRepoName$ source venv/bin/activate
-(venv)ubuntu@54.162.31.253:~/myRepoName$ pip install -r requirements.txt
-(venv) ubuntu@54.162.31.253:~/myRepoName$ pip install django bcrypt django-extensions
-(venv) ubuntu@54.162.31.253:~/myRepoName$ pip install gunicorn
+ubuntu@20.669.38.527:~/myRepoName$ virtualenv venv
+ubuntu@20.669.38.527:~/myRepoName$ source venv/bin/activate
+(venv)ubuntu@20.669.38.527:~/myRepoName$ pip install -r requirements.txt
+(venv) ubuntu@20.669.38.527:~/myRepoName$ pip install django bcrypt django-extensions
+(venv) ubuntu@20.669.38.527:~/myRepoName$ pip install gunicorn
 ```
 ## Step 6: Collect Static Files
 ### NOTE FOR STEP 6 and BELOW
@@ -182,8 +315,8 @@ If you named your repo something different from your project, the repo name and 
 Navigate into your main project directory (where `settings.py` lives). We're going to use a built-in text editor in the terminal to update the code in `settings.py`. For example:
 
 ```bash
-(venv) ubuntu@54.162.31.253:~/myRepoName$ cd {{projectName}}
-(venv) ubuntu@54.162.31.253:~/myRepoName/projectName$ sudo vim settings.py
+(venv) ubuntu@20.669.38.527:~/myRepoName$ cd {{projectName}}
+(venv) ubuntu@20.669.38.527:~/myRepoName/projectName$ sudo vim settings.py
 ```
 
 `settings.py` is now open for editing. Use arrows to navigate around, and when you get your cursor to the desired location, press i to enter insert mode.
@@ -207,7 +340,7 @@ Run `cd ..` to get back to the folder that holds `manage.py`. Make sure your vir
 
 ```bash
 
-(venv) ubuntu@54.162.31.253:~myRepoName$ python manage.py collectstatic #say yes
+(venv) ubuntu@20.669.38.527:~myRepoName$ python manage.py collectstatic #say yes
 
 ```
 ## Step 7: Gunicorn
@@ -215,7 +348,7 @@ Run `cd ..` to get back to the folder that holds `manage.py`. Make sure your vir
 Now let's test gunicorn by `cd ..` up one level and then enter the following:
 
 ```bash
-(venv) ubuntu@54.162.31.253:~myRepoName$ gunicorn --bind 0.0.0.0:8000 {{projectName}}.wsgi:application
+(venv) ubuntu@20.669.38.527:~myRepoName$ gunicorn --bind 0.0.0.0:8000 {{projectName}}.wsgi:application
 ```
 
 Run `ctrl-c` and `deactivate` your virtual environment.
@@ -224,7 +357,7 @@ Run `ctrl-c` and `deactivate` your virtual environment.
 Next, we're going to tell this gunicorn service to start a virtualenv, navigate to and start our project, *all behind the scenes*!
 
 ```bash
-ubuntu@54.162.31.253:~$ sudo vim /etc/init/gunicorn.conf
+ubuntu@20.669.38.527:~$ sudo vim /etc/init/gunicorn.conf
 ```
 
 Add the following to this empty file, updating the code that's in between curly braces {{}} (this assumes the name of your virtual environment is `venv`).  Don't forget to type i before copying and pasting the lines below, otherwise vim may cut off a few characters at the beginning!
@@ -259,7 +392,7 @@ To turn on or off this process:
 It's time to start your process!  In your terminal, enter the command below:
 
 ```bash
-ubuntu@54.162.31.253:~$ sudo service gunicorn start
+ubuntu@20.669.38.527:~$ sudo service gunicorn start
 ```
 You should see a message confirming that your process has started.
 
@@ -271,7 +404,7 @@ If you see instead a message that your job failed to start, check to make sure y
 One final file to edit. From your terminal:
 
 ```bash
-ubuntu@54.162.31.253:~$ sudo vim /etc/nginx/sites-available/{{projectName}}
+ubuntu@20.669.38.527:~$ sudo vim /etc/nginx/sites-available/{{projectName}}
 ```
 
 Add this to the following, editing what's inside curly brackets {{}}:
@@ -290,7 +423,7 @@ server {
     }
 }
 ```
-Remove the # This should be just the digits from AWS public ip, and should look something like this: `server_name 54.162.31.253;`
+Remove the # This should be just the digits from AWS public ip, and should look something like this: `server_name 20.669.38.527;`
 
 Escape and `:wq` to save and exit.
 
@@ -298,8 +431,8 @@ Escape and `:wq` to save and exit.
 Now in terminal, run the following (taking note of the space after {{projectName}}):
 
 ```bash
-ubuntu@54.162.31.253:~$ sudo ln -s /etc/nginx/sites-available/{{projectName}} /etc/nginx/sites-enabled
-ubuntu@54.162.31.253:~$ sudo nginx -t
+ubuntu@20.669.38.527:~$ sudo ln -s /etc/nginx/sites-available/{{projectName}} /etc/nginx/sites-enabled
+ubuntu@20.669.38.527:~$ sudo nginx -t
 ```
 
 Take a careful look at everything that's in that file. Compare these names to the `gunicorn` names, and what you actually are using!
@@ -309,14 +442,14 @@ Take a careful look at everything that's in that file. Compare these names to th
 We will remove the nginx default site display from directory sites-enabled, by running the following in your terminal.
 
 ```bash
-ubuntu@54.162.31.253:~$ sudo rm /etc/nginx/sites-enabled/default
+ubuntu@20.669.38.527:~$ sudo rm /etc/nginx/sites-enabled/default
 ```
 
 
 Now, all that is left to do is restart your nginx server.
 
 ```bash
-ubuntu@54.162.31.253:~$ sudo service nginx restart
+ubuntu@20.669.38.527:~$ sudo service nginx restart
 ```
 If your server restarted correctly, you will see *[OK]* on the right hand side of your terminal, on the same line as your command, and your app is deployed! Go to the public domain and you app should be there. If you see anything other than your app, review your server file for errors.
 
@@ -402,8 +535,8 @@ remember how to exit vim, by pressing `esc`, `:wq`
 We're almost done! Now the only thing left to do is to make migrations!
 
 ```bash
-(venv) ubuntu@54.162.31.253:~myRepoName$ python manage.py makemigrations
-(venv) ubuntu@54.162.31.253:~myRepoName$ python manage.py migrate
+(venv) ubuntu@20.669.38.527:~myRepoName$ python manage.py makemigrations
+(venv) ubuntu@20.669.38.527:~myRepoName$ python manage.py migrate
 ```
 Now just need to restart nginx `sudo service nginx restart`
 
