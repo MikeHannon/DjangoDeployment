@@ -21,7 +21,7 @@ Once you have activated your virtual environment, cd into your project directory
 pip freeze > requirements.txt
 ```
 
-**In your text editor, open your requirements.txt file and remove pygraphviz, pydot and mysql, if present. these modules can be tricky to install and require additional installations, so we remove them now to prevent problems later.**
+**In your text editor, open your requirements.txt file and, if they exist, remove pygraphviz, pydot and anything with mysql in it. These modules can be tricky to install and require additional installations, so we remove them now to prevent problems later.**
 
 ##Step 2: Committing 
 
@@ -70,16 +70,16 @@ Once you login to AWS and set up a cloud server, you'll be pulling code from you
 ![Alt text](imgs/2_ec2.png)
 3. Launch a new instance from the EC2 Dashboard, as shown below:
 ![Alt text](imgs/3_launch_instance.png)
-4. Select *Ubuntu Server 14.04* option.  Be sure to scroll close to the bottom to find the correct version of Ubuntu. The opton closest to the top will get you a newer version, which doesn't play well with pip and virtualenv.
+4. Select *Ubuntu Server 14.04* option.  Be sure to scroll close to the bottom to find the correct version of Ubuntu. The option closest to the top will get you a newer version, which doesn't play well with pip and virtualenv.
 ![Alt text](imgs/4_ubuntu_1404.png)
 5. Select *t2.micro* option and click *Review and Launch*
 ![Alt text](imgs/5_review_launch.png)
 
 ### Security settings
 
-1. Click the *Edit security groups* link in the ower right corner
+1. Click the *Edit security groups* link in the lower right corner
 ![Alt text](imgs/6_edit_sec_groups.png)
-2. SSH option should be there already. Reset SSH source from the dropdown menu to MyIP (this has to be updated everytime you change IP addresses.)
+2. SSH option should be there already. Reset SSH source from the dropdown menu to MyIP. This is the ip address of your current location. If you go home, for example, you will have to set this again to get it to be your home ip.
 ![Alt text](imgs/7_add_rule.png)
 3. Click the add a rule button twice to add HTTP and HTTPS, source set to *Anywhere*, and then click ***Click Review and Launch:***
 ![Alt text](imgs/8_completed_rules.png)
@@ -113,7 +113,13 @@ Back in your AWS console click the connect button at the top of your screen here
 ![Alt text](imgs/12_connect.png)
 
 
-A popup will appear with instructions on how to connect.  If you are a mac user, run the chmod command, otherwise, skip this command and copy and paste the line starting with ssh into your terminal.
+A popup will appear with instructions on how to connect. The commands in red boxes are the ones you should run.
+
+**If you are a mac user:**
+Run the chmod command in your terminal.
+
+**Everyone:**
+Copy and paste the line starting with ssh into your terminal.
 ![Alt text](imgs/13_connect_pop.png)
 =======
 
@@ -172,11 +178,25 @@ ubuntu@54.162.31.253:~/myRepoName$ source venv/bin/activate
 (venv) ubuntu@54.162.31.253:~/myRepoName$ pip install django bcrypt django-extensions
 (venv) ubuntu@54.162.31.253:~/myRepoName$ pip install gunicorn
 ```
+
+### VIM
+If you have used vim before, skip to step 6.
+
+Vim is a terminal based file editor. We will use it to change the necessary files to get our project running. Once the file opens, press `i` to enter INSERT mode. You should see **--INSERT--** at the bottom left corner of your terminal. Now use your arrow keys to move the cursor to where you want to edit and make your changes. 
+
+Once you are done, press the `esc` key to exit INSERT mode. Type a colon to enter the vim command interface. You should now see a colon at the bottom left corner of your terminal. Now, type `wq` and press `return` to write (save) and quit.
+
+If you want to quit without saving, type `q!` after the colon.
+
+
+
+
 ## Step 6: Collect Static Files
-### NOTE FOR STEP 6 and BELOW
+### IMPORTANT: NOTE FOR STEP 6 and BELOW
 ### Anywhere you see {{repoName}} -- replace that whole thing INCLUDING the {{}} with your outer folder name.
 ### Anywhere you see {{projectName}} -- replace that whole thing INCLUDING the {{}} with the project folder name.
 ### Anywhere you see {{yourEC2.public.ip}} -- replace that whole thing INCLUDING the {{}} with the public IP address of your newly created server.
+----------
 
 If you named your repo something different from your project, the repo name and project name may be different, but it is ok if they are the same.
 
@@ -207,13 +227,11 @@ If you wish to save changes without exiting type `:w` after escape.
 Run `cd ..` to get back to the folder that holds `manage.py`. Make sure your virtual environment is activated!
 
 ```bash
-
 (venv) ubuntu@54.162.31.253:~myRepoName$ python manage.py collectstatic #say yes
-
 ```
 ## Step 7: Gunicorn 
 
-Now let's test gunicorn by `cd ..` up one level and then enter the following:
+Now let's test gunicorn, make sure you are in your repo folder and then enter the following:
 
 ```bash
 (venv) ubuntu@54.162.31.253:~myRepoName$ gunicorn --bind 0.0.0.0:8000 {{projectName}}.wsgi:application
@@ -225,10 +243,10 @@ Run `ctrl-c` and `deactivate` your virtual environment.
 Next, we're going to tell this gunicorn service to start a virtualenv, navigate to and start our project, *all behind the scenes*!
 
 ```bash
-ubuntu@54.162.31.253:~$ sudo vim /etc/init/gunicorn.conf
+ubuntu@54.162.31.253:~myRepoName$ sudo vim /etc/init/gunicorn.conf
 ```
 
-Add the following to this empty file, updating the code that's in between curly braces {{}} (this assumes the name of your virtual environment is `venv`).  Don't forget to type i before copying and pasting the lines below, otherwise vim may cut off a few characters at the beginning!
+Add the following to this empty file, updating the code that's in between curly braces **{{ }}** (this assumes the name of your virtual environment is `venv`).  Don't forget to type `i` before copying and pasting the lines below, otherwise vim may cut off a few characters at the beginning!
 
 ```
 description "Gunicorn application server handling our project"
@@ -241,7 +259,7 @@ chdir /home/ubuntu/{{myRepoName}}
 exec venv/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/{{myRepoName}}/{{projectName}}.sock {{projectName}}.wsgi:application
 ```
 
-*REMINDER: myRepoName is the name of the repo you cloned in, projectName is the name of the folder that was used when you ran the django-admin startproject command. This folder is sibling to your apps folder.*
+***REMINDER****: myRepoName is the name of the repo you cloned in, projectName is the name of the folder that was used when you ran the django-admin startproject command. This folder is sibling to your apps folder.*
 
 Here's what's actually happening:
 1. `runlevel`s are system configuration bytes (just use 2,3,4,5 as stated on the start, stop)
