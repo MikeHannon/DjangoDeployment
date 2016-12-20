@@ -99,7 +99,6 @@ Once you login to AWS and set up a cloud server, you'll be pulling code from you
 ##Step 4: Connecting to your remote server
 
 Back in your terminal, cd to the folder that holds the key file you just downloaded.
-=======
 
 ```bash
 > cd /projects/AWS
@@ -173,33 +172,30 @@ This is our PostgreSQL prompt, here we can set up the requirements needed for ou
  - Optimize our database for the Django framework
  - Grant necessary privileges to our newly created user
 
- *NOTE:* The semicolons you're going to see in the code blocks below cannot be omitted, it signifies the end of a psql command. The psql prompt is also case sensitive.
+*NOTE:* The semicolons you're going to see in the code blocks below cannot be omitted, it signifies the end of a psql command. The psql prompt is also case sensitive.
 
-Type in:
+Let's get typing...
+
 ```bash
 postgres=* CREATE DATABASE courses;
 ```
 
 Next up, let's create a database user and set a password.
 
-Type in:
 ```bash
 postgres=* CREATE USER ubuntu WITH PASSWORD 'password';
 ```
 
 Now, let's modify a few of the connection parameters, this speeds up our database operations.
 
-Type in:
 ```bash
 postgres=* ALTER ROLE ubuntu SET client_encoding TO 'utf8';
 ```
 
-Type in:
 ```bash
 postgres=* ALTER ROLE ubuntu SET default_transaction_isolation TO 'read committed';
 ```
 
-Type in:
 ```bash
 postgres=* ALTER ROLE ubuntu SET timezone TO 'UTC';
 ```
@@ -209,21 +205,15 @@ https://docs.djangoproject.com/en/1.9/ref/databases/#optimizing-postgresql-s-con
 
 Now let's give out user access to administrate on the database.
 
-Type in:
 ```bash
 postgres=* GRANT ALL PRIVILEGES ON DATABASE courses TO ubuntu;
 ```
 
-Let's leave the psql prompt and move on. To do this..
-
-Type in:
+Let's leave the psql prompt and move on. To do this...
 
 ```bash
 postgres=* \q
 ```
-In review, we've
-
-<!-- END DATABASE CONFIGURATION -->
 
 ## Step 7: Configuring your virtual environment
 
@@ -258,13 +248,13 @@ To install these components send this command into your terminal:
 (djangoEnv) ubuntu@20.669.38.527:~$ pip install django gunicorn psycopg2
 ```
 
-## Step 7: PORTING LOCAL DEVELOPMENT DJANGO APP TO PRODUCTION DJANGO APP
+## Step 7: Porting Local Development Django App to a Production Django App
 
 Now that we have some of our deployment infrastructure complete, let's begin working on configuring our Django project.
 
-*Note!* There are going to be a lot of small moving pieces moving forward, turn up your attention to detail one notch. We're going to write and change many files, go slowly, read closely, and proofread everything.
+*Note:* There are going to be a lot of small moving pieces moving forward, turn up your attention to detail one notch. We're going to write and change many files, go slowly, read closely, and *proofread* everything.
 
-First up, let's git clone our project.
+First up, let's git clone our project to our EC2 sever.
 
 ```bash
 ubuntu@20.669.38.527:~$ git clone https://github.com/YOURUSERNAME/YOURREPONAME.git
@@ -275,13 +265,13 @@ At the moment your current folder directory should looks something like this.
 ```bash
 - ubuntu
   - djangoProject # your virtual environment should be inside this folder
-  - repoName
+  - repoName # Your cloned repo
     - apps
     - projectName
     - ... # other files/folders
 ```
 
-Navigate into the project you just cloned into your home directory and run `ls` in your terminal. If you don't see `manage.py` as one of the files, *STOP*. Review the setting up GitHub/Git pieces from earlier.
+Navigate into the project you just cloned into your home directory and run `ls` in your terminal. If you don't see manage.py as one of the files, *STOP*. Review the setting up GitHub/Git pieces from earlier.
 
 From within the project level folder, let's make some modifications to the settings.py file.
 
@@ -451,9 +441,11 @@ WantedBy=multi-user.target
 
 Now that our service file has been created, we can enable it so that it starts on boot with these commands.
 
+```bash
 ubuntu@20.669.38.527:~$ sudo systemctl daemon-reload
 ubuntu@20.669.38.527:~$ sudo systemctl start gunicorn
 ubuntu@20.669.38.527:~$ sudo systemctl enable gunicorn
+```
 
 *Note:* if any additional changes are made to the gunicorn.service the previous three commands will need to be run in order to sync things up and restart our service.
 
@@ -464,7 +456,7 @@ We're going to configure Nginx so that it will pass traffic to Gunicorn. We will
 Do this by typing in:
 
 ```bash
-ubuntu@20.669.38.527:~$ sudo nano /etc/nginx/sites-available/djangoProject
+ubuntu@20.669.38.527:~$ sudo nano /etc/nginx/sites-available/courses_deployment
 ```
 
 In this file add the following:
@@ -472,7 +464,7 @@ In this file add the following:
 ```bash
 server {
     listen 80;
-    server_name 54.146.185.204;
+    server_name YOUR.PUBLIC.IP.HERE;
 
     location = /favicon.ico { access_log off; log_not_found off; }
     location /static/ {
