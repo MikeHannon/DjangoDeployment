@@ -253,7 +253,7 @@ From within the project level folder, let's make some modifications to the setti
 
 We can make these modifications by typing in the following:
 
-ubuntu@20.669.38.527:~/djangoProject/courses_deployment/Courses$ sudo nano settings.py
+ubuntu@20.669.38.527:~$/djangoProject/courses_deployment/Courses$ sudo nano settings.py
 
 Set DEBUG to False, next...
 
@@ -297,15 +297,15 @@ Let's see if what we've down works by migrating our project.
 
 Navigate into the project, and run the following commands.
 
-ubuntu@20.669.38.527:~/djangoProject/courses_deployment/Courses$ cd ..
-ubuntu@20.669.38.527:~/djangoProject/courses_deployment$ ./manage.py makemigrations
-ubuntu@20.669.38.527:~/djangoProject/courses_deployment$ ./manage.py migrate
+ubuntu@20.669.38.527:~$/djangoProject/courses_deployment/Courses$ cd ..
+ubuntu@20.669.38.527:~$/djangoProject/courses_deployment$ ./manage.py makemigrations
+ubuntu@20.669.38.527:~$/djangoProject/courses_deployment$ ./manage.py migrate
 
 If you encounter any errors, first, read the error that is reported and make necessary changes, if the errors still persist get a fresh pair of eyes to take a look at your recent changes. DO NOT attempt to write your own settings or configurations.
 
 After a sucessful migration, lets create an administrative user for the project.
 
-ubuntu@20.669.38.527:~/djangoProject/courses_deployment$  ./manage.py createsuperuser
+ubuntu@20.669.38.527:~$/djangoProject/courses_deployment$  ./manage.py createsuperuser
 
 The next few prompts will ask your to choose a username, password, and email.
 
@@ -315,14 +315,116 @@ Enter a password, I used django***
 
 Collect your static files with this command.
 
-ubuntu@20.669.38.527:~/djangoProject/courses_deployment$ ./manage.py collectstatic
+ubuntu@20.669.38.527:~$ /djangoProject/courses_deployment$ ./manage.py collectstatic
 
 Let's test our deployed Django development sever out..
 
 Type in:
-ubuntu@20.669.38.527:~/djangoProject/courses_deployment$ ./manage.py runserver 0.0.0.0:8000
+ubuntu@20.669.38.527:~$ /djangoProject/courses_deployment$ ./manage.py runserver 0.0.0.0:8000
 
 If you see your app, then everything is working and you now have a development server running. This is excellent progress, if you have your admin routing intact in your Django project, you can add /admin to the end of the URL and access your admin panel, use the username and password you typed in when the createsuperuser command was run.
+
+<!-- Testing Gunicorns Ability to Serve the Project -->
+
+Before we leave the virtual environment, let's test and make sure Gunicorn works the way we want it too. We'll do this by navigating to your project and then binding Gunicorn to it.
+
+When you run these commands, you want to be in the folder that contains the manage.py file
+
+This line Courses.wsgi:application, Courses should be the name of your project folder that contains a wsgi.py file.
+
+Type in these commands:
+ubuntu@20.669.38.527:~$ djangoProject/courses_deployment$ gunicorn --bind 0.0.0.0:8000 Courses.wsgi:application
+
+We are testing Gunicorn by passing it a relative path to our Django's project wsgi.py file which is the entry point to our application.
+
+After the worker stars, stop the test by pressing CTRL+C and stop the workers.
+
+We are now done with our virtual environment, we can exit it by typing
+
+ubuntu@20.669.38.527:~$ deactivate
+
+<!-- Gunicorn systemd Service File -->
+As Linux distributions continue to evolve and change, more of them are adopting the systemd init system. This software manages controls aspects of your server including services which is what Gunicorn is going to be.
+
+To create a systemd service file that will turn Gunicorn on and off we're going to open a systemd service file and make some changes.
+
+Type in:
+ubuntu@20.669.38.527:~$ sudo nano /etc/systemd/system/gunicorn.service
+
+~home
+  - ubuntu
+    - djangoProject
+      - myprojectenv
+      - courses_deployment
+        - Courses
+        - apps
+
+Once the nano text editor opens up type in the following:
+
+[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/courses_deployment
+ExecStart=/home/ubuntu/djangoProject/djangoEnv/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/courses_deployment/Courses.sock Courses.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+
+Now that our service file has been created, we can enable it so that it starts on boot with these commands.
+
+ubuntu@20.669.38.527:~$
+sudo systemctl daemon-reload
+systemctl start gunicorn
+systemctl enable gunicorn
+ubuntu@20.669.38.527:~$ sudo systemctl enable gunicorn
+
+<!-- END GUNICORN SERVICE CONFIGURATION -->
+
+<!-- BEGIN NGINX CONFIGURATION -->
+
+We're going to configure Nginx so that it will pass pass traffic to Gunicorn. We will start by creating a sites-available directory.
+
+Do this by typing in:
+
+ubuntu@20.669.38.527:~$ sudo nano /etc/nginx/sites-available/djangoProject
+
+In this file add the following:
+
+server {
+    listen 80;
+    server_name 54.146.185.204;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location /static/ {
+        root /home/ubuntu/courses_deployment;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/ubuntu/courses_deployment/Courses.sock;
+    }
+}
+
+
+Save and close out of nano. We can enable this file by linking it to the sites-enabled directory:
+
+ubuntu@20.669.38.527:~$ sudo ln -s /etc/nginx/sites-available/courses_deployment /etc/nginx/sites-enabled
+
+Test your Nginx configuration for syntax errors by typing:
+
+ubuntu@20.669.38.527:~$ sudo nginx -t
+
+Fix any errors is needed, once clear, type in:
+
+sudo systemctl restart nginx
+
+if a firewall was made...
+
+sudo ufw allow 'Nginx Full'
 
 
 ---
@@ -331,73 +433,7 @@ ssh-copy-id timchen@54.146.185.204
 this allows you to bypass the .pem key by generating a RSA fingerprint.
 ---
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- BEgin OLD CONTENT  -->
+<!-- BEGIN OLD CONTENT  -->
 
 Now you'll clone your project from GitHub. You'll type into your terminal something that looks like this:
 
