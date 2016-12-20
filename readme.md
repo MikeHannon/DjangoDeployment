@@ -89,20 +89,19 @@ Once you login to AWS and set up a cloud server, you'll be pulling code from you
 	Name your pem key whatever makes the most sense to you as shown in the next step.  Give it a generic name, not the name of your project, as we will be re-using this instance.
 
 	The key will automatically be saved to your downloads folder when you click launch instance, but you will want to move it.  See the next item for more information on this critical step.
+
 ![Alt text](imgs/9_download_pem.png)
-5. This next part is very important! Put your pem key in a file that has no chance of ***EVER***  being pushed to github. You should not send this file via email, or in any other way make it publicly available:
+6. This next part is very important! Put your pem key in a file that has no chance of ***EVER***  being pushed to github. You should not send this file via email, or in any other way make it publicly available:
 ![Alt text](imgs/1_pem_key_folder_path.png)
-6. After launching your instance, you will see a rather confusing screen with some information, as shown below.  In order to move on, scroll to the bottom of the page and confirm that you would like to view your instance.
+7. After launching your instance, you will see a rather confusing screen with some information, as shown below.  In order to move on, scroll to the bottom of the page and confirm that you would like to view your instance.
 ![Alt text](imgs/10_view_instance.png)
-7. Once you have several instances running, you will want to be able to identify what your different instances are for.  We have the option of naming our instance, so let's do so now by clicking on our instance's name column as shown.
+8. Once you have several instances running, you will want to be able to identify what your different instances are for.  We have the option of naming our instance, so let's do so now by clicking on our instance's name column as shown.
 ![Alt text](imgs/11_name_instance.png)
 
 ##Step 4: Connecting to your remote server
 
 Back in your terminal, cd to the folder that holds the key file you just downloaded.
 =======
-
-
 
 ```bash
 > cd /projects/AWS
@@ -118,8 +117,6 @@ A popup will appear with instructions on how to connect.  If you are a mac user,
 ![Alt text](imgs/13_connect_pop.png)
 =======
 
-
-
 You might have to type yes and wait for a few seconds to a minute before you are connected, but if all goes well, you should be in your Ubuntu cloud server. Your terminal should show something like this in the far left of your prompt:
 
 ```bash
@@ -128,7 +125,7 @@ ubuntu@20.669.38.527:~$ #Commands you write appear here
 
 ## Step 5: EC2 Server Application Configuration
 
-Now we are going to set up our remote server for deployment. Our server is nothing more than a small allocated space on some else's larger computer (in this case, the big computer belongs to Amazon!).  That space has an installed operating system, just like your computer.  In this case we are using a distribution of linux called Ubuntu, version 14.04.
+Now we are going to set up our remote server for deployment. Our server is nothing more than a small allocated space on some else's larger computer (in this case, the big computer belongs to Amazon!).  That space has an installed operating system, just like your computer.  In this case we are using a distribution of linux called Ubuntu, version 16.04.
 
 Although we have linux, our new computer is otherwise empty.  Let's change that so we can start building a server capable of providing content that the rest of the world can access. In order to do so, we have to install some key programs first.  First let's install python, python dev, pip, nginx, and git
 
@@ -146,7 +143,7 @@ In addition, you'll use your newly installed pip to install the virtual environm
 ubuntu@20.669.38.527:~$ sudo apt-get update
 ```
 
-<!-- START DATABASE CONFIGURATION -->
+## Step 6: Configuring your PostgreSQL database
 
 Next up let's get our database up and running. Postgres uses a authentication scheme called "peer authentication". This means that if the users operating system matches a valid Postgres username the user can login with no further authentication.
 
@@ -154,53 +151,77 @@ During the Postgres installation, an operation system user was created and named
 
 We login by passing in the username like this:
 
-sudo -u postgres psql
+```bash
+ubuntu@20.669.38.527:~$ sudo -u postgres psql
+```
 
 You should now see something like this:
 
+```bash
 postgres=*
+```
 
-This is our PostgreSQL prompt, here we can set up the requirements needed for our Django Project.
+This is our PostgreSQL prompt, here we can set up the requirements needed for our Django Project. In the next few steps we're going to:
+
+ - Enter the PostgreSQL console
+ - Create and name a database
+ - Create a user and password for the database
+ - Optimize our database for the Django framework
+ - Grant necessary privileges to our newly created user
+
+ (NOTE: The semicolons you're going to see in the code blocks below cannot be omitted, it signifies the end of a psql command. The psql prompt is also case sensitive.)
 
 Type in:
-NOTE: the semicolon cannot be omitted, it signifies the end of a psql command. The psql prompt is also case sensitive.
-
+```bash
 postgres=* CREATE DATABASE courses;
+```
 
 Next up, let's create a database user and set a password.
 
 Type in:
-
+```bash
 postgres=* CREATE USER ubuntu WITH PASSWORD 'password';
+```
 
 Now, let's modify a few of the connection parameters, this speeds up our database operations.
 
 Type in:
+```bash
 postgres=* ALTER ROLE ubuntu SET client_encoding TO 'utf8';
+```
 
-then ...
+Type in:
+```bash
 postgres=* ALTER ROLE ubuntu SET default_transaction_isolation TO 'read committed';
+```
 
-then ...
+Type in:
+```bash
 postgres=* ALTER ROLE ubuntu SET timezone TO 'UTC';
+```
 
-These are all default settings recommend by the Django Project.
+These are all default settings recommend by the Django Project if you'd like to learn more about this database optimization process.
 https://docs.djangoproject.com/en/1.9/ref/databases/#optimizing-postgresql-s-configuration
 
 Now let's give out user access to administrate on the database.
 
 Type in:
-
+```bash
 postgres=* GRANT ALL PRIVILEGES ON DATABASE courses TO ubuntu;
+```
 
 Let's leave the psql prompt and move on. To do this..
 
 Type in:
 
+```bash
 postgres=* \q
+```
+In review, we've
 
 <!-- END DATABASE CONFIGURATION -->
 
+## Step 7: Configuring your virtual environment
 <!-- START VIRTUAL ENVIRONMENT CONFIGURATION -->
 
 Remember our virtual environments? Our Django project will need one on our Ubuntu machine as well. Note that now that we have SSH in a linux machine, we can all use \*nix commands.
@@ -426,276 +447,7 @@ if a firewall was made...
 
 sudo ufw allow 'Nginx Full'
 
-
----
-creating timchen, password is django***
-ssh-copy-id timchen@54.146.185.204
-this allows you to bypass the .pem key by generating a RSA fingerprint.
----
-
 <!-- BEGIN OLD CONTENT  -->
-
-Now you'll clone your project from GitHub. You'll type into your terminal something that looks like this:
-
-```
-ubuntu@ip-my-ip:~$ git clone https://github.com/AnnaBNana/courses.git
-```
-At the moment your current folder directory should looks something like this.
-
-```bash
-- ubuntu
-  - repoName
-    - apps
-    - projectName
-    - ... # other files/folders
-```
-
-Navigate into this project and run `ls` in your terminal. If you don't see `manage.py` as one of the files, *STOP*. Review the setting up GitHub/Git pieces from earlier.
-
-If everything looks good, let's make that virtual environment, and activate it.
-
-```bash
-ubuntu@20.669.38.527:~/myRepoName$ virtualenv venv
-ubuntu@20.669.38.527:~/myRepoName$ source venv/bin/activate
-(venv)ubuntu@20.669.38.527:~/myRepoName$ pip install -r requirements.txt
-(venv) ubuntu@20.669.38.527:~/myRepoName$ pip install django bcrypt django-extensions
-(venv) ubuntu@20.669.38.527:~/myRepoName$ pip install gunicorn
-```
-## Step 6: Collect Static Files
-### NOTE FOR STEP 6 and BELOW
-### Anywhere you see {{repoName}} -- replace that whole thing INCLUDING the {{}} with your outer folder name.
-### Anywhere you see {{projectName}} -- replace that whole thing INCLUDING the {{}} with the project folder name.
-### Anywhere you see {{yourEC2.public.ip}} -- replace that whole thing INCLUDING the {{}} with the public IP address of your newly created server.
-
-If you named your repo something different from your project, the repo name and project name may be different, but it is ok if they are the same.
-
-Navigate into your main project directory (where `settings.py` lives). We're going to use a built-in text editor in the terminal to update the code in `settings.py`. For example:
-
-```bash
-(venv) ubuntu@20.669.38.527:~/myRepoName$ cd {{projectName}}
-(venv) ubuntu@20.669.38.527:~/myRepoName/projectName$ sudo vim settings.py
-```
-
-`settings.py` is now open for editing. Use arrows to navigate around, and when you get your cursor to the desired location, press i to enter insert mode.
-
-Add the following (this will allow you to serve static content):
-
-```python
-# Inside settings.py
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-# Also enter the line below, repalcing {{yourEC2.public.ip}}
-# with your server's public IP address (leave the quotation marks)
-ALLOWED_HOSTS = ['{{yourEC2.public.ip}}']
-```
-Once you are finished making these additions, tell the vim program to exit insert mode by pressing the escape key and then type `:wq` to save your changes and quit vim.
-
-If you wish to exit without saving your changes type `:q!` after pressing escape.
-
-If you wish to save changes without exiting type `:w` after escape.
-
-Run `cd ..` to get back to the folder that holds `manage.py`. Make sure your virtual environment is activated!
-
-```bash
-
-(venv) ubuntu@20.669.38.527:~myRepoName$ python manage.py collectstatic #say yes
-
-```
-## Step 7: Gunicorn
-
-Now let's test gunicorn by `cd ..` up one level and then enter the following:
-
-```bash
-(venv) ubuntu@20.669.38.527:~myRepoName$ gunicorn --bind 0.0.0.0:8000 {{projectName}}.wsgi:application
-```
-
-Run `ctrl-c` and `deactivate` your virtual environment.
-
-
-Next, we're going to tell this gunicorn service to start a virtualenv, navigate to and start our project, *all behind the scenes*!
-
-```bash
-ubuntu@20.669.38.527:~$ sudo vim /etc/init/gunicorn.conf
-```
-
-Add the following to this empty file, updating the code that's in between curly braces {{}} (this assumes the name of your virtual environment is `venv`).  Don't forget to type i before copying and pasting the lines below, otherwise vim may cut off a few characters at the beginning!
-
-```
-description "Gunicorn application server handling our project"
-start on runlevel [2345]
-stop on runlevel [!2345]
-respawn
-setuid ubuntu
-setgid www-data
-chdir /home/ubuntu/{{myRepoName}}
-exec venv/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/{{myRepoName}}/{{projectName}}.sock {{projectName}}.wsgi:application
-```
-
-*REMINDER: myRepoName is the name of the repo you cloned in, projectName is the name of the folder that was used when you ran the django-admin startproject command. This folder is sibling to your apps folder.*
-
-Here's what's actually happening:
-1. `runlevel`s are system configuration bytes (just use 2,3,4,5 as stated on the start, stop)
-2. `respawn` -- if the project stops, restart it
-3. `setuid` -- ubuntu can use this project
-4. `setgid` -- establishes a group
-5. `chdir` -- go to the /home/ubuntu/{yourProject} #This needs to be updated to have your project's name
-6. `exec venv/bin/gunicorn`... -- execute `gunicorn` in your `virtualenv` where you pip installed it. Futhermore, bind some workers to it and activate the `wsgi` file in your main project folder. *Look at these names carefully!*
-
-To turn on or off this process:
-
-`sudo service gunicorn start`
-
-`sudo service gunicorn stop`
-
-It's time to start your process!  In your terminal, enter the command below:
-
-```bash
-ubuntu@20.669.38.527:~$ sudo service gunicorn start
-```
-You should see a message confirming that your process has started.
-
-If you see instead a message that your job failed to start, check to make sure your `.conf` file is correct, with no typos, and all pieces that needed to be changed done correctly.
-
-## Step 8: Nginx
----
-
-One final file to edit. From your terminal:
-
-```bash
-ubuntu@20.669.38.527:~$ sudo vim /etc/nginx/sites-available/{{projectName}}
-```
-
-Add this to the following, editing what's inside curly brackets {{}}:
-
-```
-server {
-    listen 80;
-    server_name {{yourEC2.public.ip}}; # This should be just the digits from AWS public ip!
-    location = /favicon.ico { access_log off; log_not_found off; }
-    location /static/ {
-        root /home/ubuntu/{{myRepoName}};
-    }
-    location / {
-        include proxy_params;
-        proxy_pass http://unix:/home/ubuntu/{{myRepoName}}/{{projectName}}.sock;
-    }
-}
-```
-Remove the # This should be just the digits from AWS public ip, and should look something like this: `server_name 20.669.38.527;`
-
-Escape and `:wq` to save and exit.
-
-
-Now in terminal, run the following (taking note of the space after {{projectName}}):
-
-```bash
-ubuntu@20.669.38.527:~$ sudo ln -s /etc/nginx/sites-available/{{projectName}} /etc/nginx/sites-enabled
-ubuntu@20.669.38.527:~$ sudo nginx -t
-```
-
-Take a careful look at everything that's in that file. Compare these names to the `gunicorn` names, and what you actually are using!
-
-## Step 9 - Finally:
-
-We will remove the nginx default site display from directory sites-enabled, by running the following in your terminal.
-
-```bash
-ubuntu@20.669.38.527:~$ sudo rm /etc/nginx/sites-enabled/default
-```
-
-
-Now, all that is left to do is restart your nginx server.
-
-```bash
-ubuntu@20.669.38.527:~$ sudo service nginx restart
-```
-If your server restarted correctly, you will see *[OK]* on the right hand side of your terminal, on the same line as your command, and your app is deployed! Go to the public domain and you app should be there. If you see anything other than your app, review your server file for errors.
-
-## Common errors and how to find them:
-
-* 502, bad gateway: there is a problem in your code. Hint: any error starting with 5 indicates a server error
-* Your gunicorn process won't start:  Check your .conf file; typos and wrong file paths are common mistakes
-* Your nginx restart fails: Check your nginx file in the sites-available directory.  Common problems include typos and forgetting to insert your project name where indicated.
-
-
-## Step 10: Adding a MySQL server (optional)
-
-SQLite is great for testing, but it's not really efficient in the context of real-world use.  This may be a bit too much to go into here, but let's look at a quick summary of why that is, and what we'll use instead.
-
-Although the developers of SQLite have done much to improve its performance, particularly in version 3, it suffers from some lack efficient write concurrency. If your site has a lot of traffic a queue begins to form, waiting for write acess to the database.  Before long, your response speed will slow to a crawl.  This happens only on high-traffic sites, however.
-
-MySQL databases, on the other hand, are incredibly fast, and very good at performing multiple operations concurrently.  In addition, MySQL can store an incredibly large amount of data, and so is said to scale well.
-
-This might never be a consideration for small to medium sized projects, but is key information in the real world. Very soon you may be working for a company that handles a large volume of requests, and it is important to know why depending on a SQLite database alone is not a practical solution for enterprise or large startups.  
-
-If you'd like to learn how to add a MySQL database to the app we just deployed, read on.  It's not as hard as you might think, thanks to Django migrations!
-
-First, we'll need to install everything necessary to run MySQL from our deployment machine.
-
-```bash
->sudo apt-get install libmysqlclient-dev
-```
-Let's install mysql-server, then we'll create a MySQL database and database user for our Django application. After running the command below, set your mysql password for root as root.
-
-```bash
->sudo apt-get install mysql-server
-```
-
-Then let's just make sure that we were able to install it correctly. First we're going to switch over to root user.
-
-```bash
->sudo su
-```
-
-The su command stand for "switch user". If we don't specify a user, Linux/Unix defaults to root user, which is the administrative user. This command provides access to everything in your system, and therefore can be dangerous if you aren't familiar with the effect of the commands you're using. Be careful not to type any commands other than the following until we exit root user a little later.
-
-The command below will open up MySQL console. You have not interacted with MySQL in the command line before because we used MySQL workbench to interact instead. We may not have a GUI available, but it's pretty easy to interact with MySQL in the command line.
-
-```bash
-mysql -u root -p
-```
-You'll see the mysql prompt where we can set up our database.
-
-Let's create a the database for our project. You can call it whatever you want but we recommend giving the name of your project. Note, every command must end with a semi-colon. Make sure to check for them if you have any errors or your commands do not run. Now to create a database on our mysql server.
-
-CREATE DATABASE {{projectName}};
-
-Exit the MySQL prompt by typing `exit;`
-
-**Important!!! After exiting the MySQL promt you MUST type the command `exit` again!**
-
-That's right, we're typing exit twice.  The first time is to exit the MySQL prompt, the second time is to deactivate the root user.  As we warned above, this is a critical step and can result in some problems with installations if we skip it.
-
-Now that we have MySQL all set up, we are ready to change some lines in our `settings.py` document and we can start working with our MySQL database!
-
-If you're in your outer project directory, you must cd into the directory containing your `settings.py` file. If you have followed instructions, you will type:
-
-```bash
->cd {{projectName}}
->sudo vim settings.py
-```
-Change your the databases section in settings.py to look like below:
-
-```bash
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': '{{projectName}}',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
-}
-```
-remember how to exit vim, by pressing `esc`, `:wq`
-
-We're almost done! Now the only thing left to do is to make migrations!
-
-```bash
-(venv) ubuntu@20.669.38.527:~myRepoName$ python manage.py makemigrations
-(venv) ubuntu@20.669.38.527:~myRepoName$ python manage.py migrate
-```
-Now just need to restart nginx `sudo service nginx restart`
 
 Now visit your site! You should be finished at this point, with a fully functioning site.  Your old data will not show up, but you should be able to perform all operations as you did previously.
 
