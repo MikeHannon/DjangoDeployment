@@ -222,41 +222,47 @@ In review, we've
 <!-- END DATABASE CONFIGURATION -->
 
 ## Step 7: Configuring your virtual environment
-<!-- START VIRTUAL ENVIRONMENT CONFIGURATION -->
 
-Remember our virtual environments? Our Django project will need one on our Ubuntu machine as well. Note that now that we have SSH in a linux machine, we can all use \*nix commands.
+Remember our virtual environments? Our Django project will need one on our Ubuntu machine as well. Note that now that we have SSH in a linux machine, we can all use \*nix commands. In the following instructions we're going to install virtualenv, create a virtual environment directory, install Django, Gunicorn, and psycopg. Each one of these components plays a vital role in getting each part of our deployment stack to work together, spend some time researching each one of these components later on, you might find out you have a passion for DevOps!
 
 First up, we have to get virutalenv onto our ubuntu machine.
 
+```bash
 ubuntu@20.669.38.527:~$ sudo pip install virtualenv
+```
 
 Now that we have virtualenv installed, let's start putting together the project!
 
+```bash
 ubuntu@20.669.38.527:~$ mkdir djangoProject
 ubuntu@20.669.38.527:~$ cd djangoProject
 ubuntu@20.669.38.527:~$ virtualenv djangoEnv
+```
 
-These commands, created a djangoProject folder, navigated into the project folder, and created a virtual environment. Before we can make changes to our virtual environment we have to activate it. Do so by typing this in:
+These commands created a djangoProject folder, navigated into the project folder, and created a virtual environment. Before we can make changes to our virtual environment we have to activate it. Do so by typing this in:
 
+```bash
 ubuntu@20.669.38.527:~$ source djangoEnv/bin/activate
+```
 
 You should now see a (djangoEnv) in front of your normal terminal prompt, this let's us know that our virtual environment is active.
 
-Now we have to install Django, Gunicorn, and psycopg which is our PostgreSQL adaptor. If you'd like to learn more about each of these components check out their documentation!
-
+Now we have to install Django, Gunicorn, and psycopg.
 To install these components send this command into your terminal:
 
+```bash
 (djangoEnv) ubuntu@20.669.38.527:~$ pip install django gunicorn psycopg2
+```
 
-<!-- END VIRTUAL ENVIRONMENT CONFIGURATION -->
-
-<!-- BEGIN PORTING LOCAL DEV DJANGO APP TO PRODUCTION DJANGO APP -->
+## Step 7: PORTING LOCAL DEVELOPMENT DJANGO APP TO PRODUCTION DJANGO APP
 
 Now that we have some of our deployment infrastructure complete, let's begin working on configuring our Django project.
 
 First up, let's git clone our project.
 
+```bash
 ubuntu@20.669.38.527:~$ git clone https://github.com/YOURUSERNAME/YOURREPONAME.git
+```
 
 At the moment your current folder directory should looks something like this.
 
