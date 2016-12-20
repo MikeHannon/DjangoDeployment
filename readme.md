@@ -21,7 +21,7 @@ Once you have activated your virtual environment, cd into your project directory
 pip freeze > requirements.txt
 ```
 
-**In your text editor, open your requirements.txt file and remove pygraphviz, pydot and mysql if present. these modules can be tricky to install and require additional installations, so we remove them now to prevent problems later.**
+**In your text editor, open your requirements.txt file and, if they exist, remove pygraphviz, pydot and anything with mysql in it. These modules can be tricky to install and require additional installations, so we remove them now to prevent problems later.**
 
 ## Step 2: Committing
 
@@ -69,17 +69,15 @@ Once you login to AWS and set up a cloud server, you'll be pulling code from you
 ![Alt text](imgs/2_ec2.png)
 3. Launch a new instance from the EC2 Dashboard, as shown below:
 ![Alt text](imgs/3_launch_instance.png)
+
 4. Select *Ubuntu Server 16.04* option.  Be sure to scroll close to the bottom to find the correct version of Ubuntu. The opton closest to the top will get you a newer version, which doesn't play well with pip and virtualenv.
 <!-- replace this image - timchen -->
-![Alt text](imgs/4_ubuntu_1404.png)
-5. Select *t2.micro* option and click *Review and Launch*
-![Alt text](imgs/5_review_launch.png)
 
 ### Security settings
 
-1. Click the *Edit security groups* link in the ower right corner
+1. Click the *Edit security groups* link in the lower right corner
 ![Alt text](imgs/6_edit_sec_groups.png)
-2. SSH option should be there already. Reset SSH source from the dropdown menu to MyIP (this has to be updated everytime you change IP addresses.)
+2. SSH option should be there already. Reset SSH source from the dropdown menu to MyIP. This is the ip address of your current location. If you go home, for example, you will have to set this again to get it to be your home ip.
 ![Alt text](imgs/7_add_rule.png)
 3. Click the add a rule button twice to add HTTP and HTTPS, source set to *Anywhere*, and then click ***Click Review and Launch:***
 ![Alt text](imgs/8_completed_rules.png)
@@ -113,7 +111,13 @@ Back in your AWS console click the connect button at the top of your screen here
 ![Alt text](imgs/12_connect.png)
 
 
-A popup will appear with instructions on how to connect.  If you are a mac user, run the chmod command, otherwise, skip this command and copy and paste the line starting with ssh into your terminal.
+A popup will appear with instructions on how to connect. The commands in red boxes are the ones you should run.
+
+**If you are a mac user:**
+Run the chmod command in your terminal.
+
+**Everyone:**
+Copy and paste the line starting with ssh into your terminal.
 ![Alt text](imgs/13_connect_pop.png)
 =======
 
@@ -225,7 +229,7 @@ In review, we've
 
 Remember our virtual environments? Our Django project will need one on our Ubuntu machine as well. Note that now that we have SSH in a linux machine, we can all use \*nix commands. In the following instructions we're going to install virtualenv, create a virtual environment directory, install Django, Gunicorn, and psycopg. Each one of these components plays a vital role in getting each part of our deployment stack to work together, spend some time researching each one of these components later on, you might find out you have a passion for DevOps!
 
-First up, we have to get virutalenv onto our ubuntu machine.
+Let's test gunicorn, make sure you are in your repo folder and then enter the following:
 
 ```bash
 ubuntu@20.669.38.527:~$ sudo pip install virtualenv
@@ -321,7 +325,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'courses',
-        'USER': 'ubuntu',
+        'USER': 'ubuntu', # Use ubuntu here.
         'PASSWORD': 'password', # You may choose a password here.
         'HOST': 'localhost',
         'PORT': '',
@@ -412,21 +416,25 @@ As Linux distributions continue to evolve and change, more of them are adopting 
 
 To create a systemd service file that will turn Gunicorn on and off we're going to have to create a systemd service file and make some changes.
 
+Our current folder structure should look like this:
+```bash
+~ #home
+  - ubuntu
+    - courses_deployment
+      - Courses
+      - apps
+    - djangoProject
+      - myprojectenv
+```
+
 Type in:
 ```bash
 ubuntu@20.669.38.527:~$ sudo nano /etc/systemd/system/gunicorn.service
 ```
 
-~home
-  - ubuntu
-    - djangoProject
-      - myprojectenv
-      - courses_deployment
-        - Courses
-        - apps
-
 Once the nano text editor opens up type in the following:
 
+```bash
 [Unit]
 Description=gunicorn daemon
 After=network.target
@@ -439,27 +447,29 @@ ExecStart=/home/ubuntu/djangoProject/djangoEnv/bin/gunicorn --workers 3 --bind u
 
 [Install]
 WantedBy=multi-user.target
+```
 
 Now that our service file has been created, we can enable it so that it starts on boot with these commands.
 
-ubuntu@20.669.38.527:~$
-sudo systemctl daemon-reload
-systemctl start gunicorn
-systemctl enable gunicorn
+ubuntu@20.669.38.527:~$ sudo systemctl daemon-reload
+ubuntu@20.669.38.527:~$ sudo systemctl start gunicorn
 ubuntu@20.669.38.527:~$ sudo systemctl enable gunicorn
 
-<!-- END GUNICORN SERVICE CONFIGURATION -->
+*Note:* if any additional changes are made to the gunicorn.service the previous three commands will need to be run in order to sync things up and restart our service.
 
-<!-- BEGIN NGINX CONFIGURATION -->
+## Step 9: NGINX Configuration
 
-We're going to configure Nginx so that it will pass pass traffic to Gunicorn. We will start by creating a sites-available directory.
+We're going to configure Nginx so that it will pass traffic to Gunicorn. We will start by creating a sites-available directory.
 
 Do this by typing in:
 
+```bash
 ubuntu@20.669.38.527:~$ sudo nano /etc/nginx/sites-available/djangoProject
+```
 
 In this file add the following:
 
+```bash
 server {
     listen 80;
     server_name 54.146.185.204;
@@ -474,29 +484,29 @@ server {
         proxy_pass http://unix:/home/ubuntu/courses_deployment/Courses.sock;
     }
 }
-
+```
 
 Save and close out of nano. We can enable this file by linking it to the sites-enabled directory:
 
+```bash
 ubuntu@20.669.38.527:~$ sudo ln -s /etc/nginx/sites-available/courses_deployment /etc/nginx/sites-enabled
+```
 
 Test your Nginx configuration for syntax errors by typing:
 
+```bash
 ubuntu@20.669.38.527:~$ sudo nginx -t
+```
 
-Fix any errors is needed, once clear, type in:
+Fix any errors is needed, once the above command can be run without error, type in:
 
-sudo systemctl restart nginx
-
-if a firewall was made...
-
-sudo ufw allow 'Nginx Full'
-
-<!-- BEGIN OLD CONTENT  -->
+```bash
+ubuntu@20.669.38.527:~$ sudo systemctl restart nginx
+```
 
 Now visit your site! You should be finished at this point, with a fully functioning site.  Your old data will not show up, but you should be able to perform all operations as you did previously.
 
-## Step 10.01: Reconnecting
+## Step 10: Reconnecting
 
 Remember how we said that we would have to change our security settings every time our IP changes?  The bad news is that this will be every time we try to reconnect.  The good news is that it's easy to change those settings, if you know where to look.
 
