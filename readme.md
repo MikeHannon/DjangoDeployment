@@ -169,7 +169,7 @@ This is our PostgreSQL prompt, here we can set up the requirements needed for ou
  - Optimize our database for the Django framework
  - Grant necessary privileges to our newly created user
 
- (NOTE: The semicolons you're going to see in the code blocks below cannot be omitted, it signifies the end of a psql command. The psql prompt is also case sensitive.)
+ *NOTE:* The semicolons you're going to see in the code blocks below cannot be omitted, it signifies the end of a psql command. The psql prompt is also case sensitive.
 
 Type in:
 ```bash
@@ -245,7 +245,7 @@ These commands created a djangoProject folder, navigated into the project folder
 ubuntu@20.669.38.527:~$ source djangoEnv/bin/activate
 ```
 
-You should now see a (djangoEnv) in front of your normal terminal prompt, this let's us know that our virtual environment is active.
+You should now see a `(djangoEnv)` in front of your normal terminal prompt, this let's us know that our virtual environment is active.
 
 Now we have to install Django, Gunicorn, and psycopg.
 To install these components send this command into your terminal:
@@ -258,6 +258,8 @@ To install these components send this command into your terminal:
 
 Now that we have some of our deployment infrastructure complete, let's begin working on configuring our Django project.
 
+*Note!* There are going to be a lot of small moving pieces moving forward, turn up your attention to detail one notch. We're going to write and change many files, go slowly, read closely, and proofread everything.
+
 First up, let's git clone our project.
 
 ```bash
@@ -268,115 +270,152 @@ At the moment your current folder directory should looks something like this.
 
 ```bash
 - ubuntu
+  - djangoProject # your virtual environment should be inside this folder
   - repoName
     - apps
     - projectName
     - ... # other files/folders
 ```
 
-Navigate into this project and run `ls` in your terminal. If you don't see `manage.py` as one of the files, *STOP*. Review the setting up GitHub/Git pieces from earlier.
+Navigate into the project you just cloned into your home directory and run `ls` in your terminal. If you don't see `manage.py` as one of the files, *STOP*. Review the setting up GitHub/Git pieces from earlier.
 
 From within the project level folder, let's make some modifications to the settings.py file.
 
 We can make these modifications by typing in the following:
 
+```bash
 ubuntu@20.669.38.527:~$/djangoProject/courses_deployment/Courses$ sudo nano settings.py
+```
 
-Set DEBUG to False, next...
+Locate this:
 
-Locate this
+```python
+  DEBUG = True
+```
+and change to `False`.
+
+Locate this:
+```python
   ALLOWED_HOSTS = []
+```
 
 Now type in the Public IP associated with you server instace, this can be found in the description tab in the AWS instance dashboard.
 
+```python
 ALLOWED_HOSTS = ['12.123.123.123']
+```
 
 Next, were going to configure our database settings.
 
 Locate this:
+```python
   DATABASES = { ... }
+```
 
 The current configuration is set to SQLite, and now that we're putting our application into production, we're going to have to change some settings to work with the PostgreSQL database we created earlier.
 
 Change the settings so they mirror this:
 
+```python
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'courses',
         'USER': 'ubuntu',
-        'PASSWORD': 'password',
+        'PASSWORD': 'password', # You may choose a password here.
         'HOST': 'localhost',
         'PORT': '',
     }
 }
+```
 
 Further down you'll come across a line that describes where static files can be found. We'll need to add a line here so that Nginix will have the ability to handle requests to serve requested static files.
 
 The last two lines in your settings.py file should have these two lines:
 
+```python
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+```
 
-Save and close by pressing CTRL+X, choosing Yes, and writing to the setting.py file.
+Save and close by pressing `CTRL + X`, choosing `Yes`, and writing to the setting.py file.
 
-Let's see if what we've down works by migrating our project.
+Let's see if what we've down works, we're gonna do it live!
+Navigate into the project, and run the following commands and migrate your project.
 
-Navigate into the project, and run the following commands.
-
+```bash
 ubuntu@20.669.38.527:~$/djangoProject/courses_deployment/Courses$ cd ..
 ubuntu@20.669.38.527:~$/djangoProject/courses_deployment$ ./manage.py makemigrations
 ubuntu@20.669.38.527:~$/djangoProject/courses_deployment$ ./manage.py migrate
+```
 
-If you encounter any errors, first, read the error that is reported and make necessary changes, if the errors still persist get a fresh pair of eyes to take a look at your recent changes. DO NOT attempt to write your own settings or configurations.
+If you encounter any errors, first, read the error that is reported and make necessary changes, if errors still persist get a fresh pair of eyes to take a look at your recent changes. *DO NOT* attempt to write your own settings or configurations.
 
-After a sucessful migration, lets create an administrative user for the project.
+After a successful migration, create an administrative user for the project.
+Do this with the following command:
 
+```bash
 ubuntu@20.669.38.527:~$/djangoProject/courses_deployment$  ./manage.py createsuperuser
+```
 
 The next few prompts will ask your to choose a username, password, and email.
 
-Use 'ubuntu' as your username
+Enter a username
 Use your email address
-Enter a password, I used django***
+Enter a password
 
-Collect your static files with this command.
+The administrative username and password you just chose to you will be your login and password to access the builtin Django admin panel features.
 
+Next up, collect your static files with this command.
+
+```bash
 ubuntu@20.669.38.527:~$ /djangoProject/courses_deployment$ ./manage.py collectstatic
+```
 
 Let's test our deployed Django development sever out..
 
 Type in:
+```bash
 ubuntu@20.669.38.527:~$ /djangoProject/courses_deployment$ ./manage.py runserver 0.0.0.0:8000
+```
 
-If you see your app, then everything is working and you now have a development server running. This is excellent progress, if you have your admin routing intact in your Django project, you can add /admin to the end of the URL and access your admin panel, use the username and password you typed in when the createsuperuser command was run.
+In your browser, navigate to `your_public_ip_address:8000`.
 
-<!-- Testing Gunicorns Ability to Serve the Project -->
+If you see your app, then everything is working and you now have a development server running. This is *excellent* progress, if you have your admin routing intact in your Django project, you can add /admin to the end of the URL and access your admin panel, use the username and password you typed in when the createsuperuser command was run.
+
+## Step 8: Testing Gunicorns Ability to Serve the Project
 
 Before we leave the virtual environment, let's test and make sure Gunicorn works the way we want it too. We'll do this by navigating to your project and then binding Gunicorn to it.
 
 When you run these commands, you want to be in the folder that contains the manage.py file
 
-This line Courses.wsgi:application, Courses should be the name of your project folder that contains a wsgi.py file.
+In the following command `Courses.wsgi:application`, Courses should be the name of the folder that contains the wsgi.py file.
 
 Type in these commands:
+```bash
 ubuntu@20.669.38.527:~$ djangoProject/courses_deployment$ gunicorn --bind 0.0.0.0:8000 Courses.wsgi:application
+```
 
 We are testing Gunicorn by passing it a relative path to our Django's project wsgi.py file which is the entry point to our application.
 
-After the worker stars, stop the test by pressing CTRL+C and stop the workers.
+After the workers star, stop the test by pressing `CTRL + C` and stopping the workers.
 
 We are now done with our virtual environment, we can exit it by typing
 
+```bash
 ubuntu@20.669.38.527:~$ deactivate
+```
 
-<!-- Gunicorn systemd Service File -->
-As Linux distributions continue to evolve and change, more of them are adopting the systemd init system. This software manages controls aspects of your server including services which is what Gunicorn is going to be.
+## Step 9: Creating a Gunicorn systemd Service File
 
-To create a systemd service file that will turn Gunicorn on and off we're going to open a systemd service file and make some changes.
+As Linux distributions continue to evolve and change, more of them are adopting the systemd init system. This software manages and controls aspects of your server including services. This is what we want Gunicorn to be. The primary advantage of turning Gunicorn into a service is that Gunicorn will start with the server after being rebooted and once configured will just work.
+
+To create a systemd service file that will turn Gunicorn on and off we're going to have to create a systemd service file and make some changes.
 
 Type in:
+```bash
 ubuntu@20.669.38.527:~$ sudo nano /etc/systemd/system/gunicorn.service
+```
 
 ~home
   - ubuntu
